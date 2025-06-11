@@ -9,3 +9,11 @@ export interface MCQFormInput {
   numQuestions: number;
   difficulty: Difficulty;
 }
+
+// User's selected answer for a question (index of the option, or null if unanswered)
+export type UserAnswer = number | null;
+
+// Whether a question is marked for review
+export type MarkedReview = boolean;
+
+export type QuizState = 'form' | 'taking' | 'submitted' | 'reviewing';
