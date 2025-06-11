@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Trash2, Flag, Send } from 'lucide-react';
 import type { QuizState } from '@/types/mcq';
+import { cn } from '@/lib/utils';
 
 interface QuizControlsProps {
   currentQuestionIndex: number;
