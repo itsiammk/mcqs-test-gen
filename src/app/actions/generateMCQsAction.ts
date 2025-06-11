@@ -1,3 +1,4 @@
+
 'use server';
 
 import { generateMCQs, type GenerateMCQsInput, type GenerateMCQsOutput } from '@/ai/flows/generate-mcqs';
@@ -7,6 +8,8 @@ const ActionInputSchema = z.object({
   subject: z.string().min(1, "Subject is required"),
   numQuestions: z.coerce.number().min(1, "Number of questions must be at least 1"),
   difficulty: z.enum(['low', 'moderate', 'high']),
+  specificExam: z.string().optional(),
+  notes: z.string().optional(),
 });
 
 export async function generateMCQsAction(

@@ -77,9 +77,9 @@ export function QuestionNavigationPanel({
   };
 
   const legendItems = quizState === 'reviewing' ? [
-    { label: "Correct", icon: <CheckCircle className="h-4 w-4 text-green-500" />, style: "bg-green-100 border-green-500" },
-    { label: "Incorrect", icon: <XCircle className="h-4 w-4 text-red-500" />, style: "bg-red-100 border-red-500" },
-    { label: "Not Answered", icon: <HelpCircle className="h-4 w-4 text-gray-500" />, style: "bg-gray-100 border-gray-400" },
+    { label: "Correct", icon: <CheckCircle className="h-4 w-4 text-green-500" />, style: "bg-green-100/80 dark:bg-green-900/50 border-green-500" },
+    { label: "Incorrect", icon: <XCircle className="h-4 w-4 text-red-500" />, style: "bg-red-100/80 dark:bg-red-900/50 border-red-500" },
+    { label: "Not Answered", icon: <HelpCircle className="h-4 w-4 text-gray-500" />, style: "bg-gray-100/80 dark:bg-gray-700/50 border-gray-400" },
     { label: "Current", icon: <Edit3 className="h-4 w-4 text-primary" />, style: "ring-2 ring-primary" },
   ] : [
     { label: "Current", style: "bg-primary text-primary-foreground" },
@@ -89,13 +89,13 @@ export function QuestionNavigationPanel({
   ];
 
   return (
-    <Card className="sticky top-24 shadow-lg border-border/60 max-h-[calc(100vh-8rem)] flex flex-col">
+    <Card className="shadow-lg border-border/60 max-h-[calc(100vh-10rem)] flex flex-col">
       <CardHeader className="p-5 pb-4">
         <CardTitle className="text-xl font-headline text-center">Question Palette</CardTitle>
       </CardHeader>
       <CardContent className="p-5 pt-0 flex-grow overflow-hidden flex flex-col">
-        <ScrollArea className="flex-grow pr-2 -mr-2">
-          <div className="grid grid-cols-5 gap-2.5 sm:gap-3">
+        <ScrollArea className="flex-grow pr-3 -mr-3 max-h-[calc(100vh-22rem)] sm:max-h-[calc(100vh-20rem)]"> {/* Adjusted max-height */}
+          <div className="grid grid-cols-5 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-4 xl:grid-cols-5 gap-2.5 sm:gap-3">
             {Array.from({ length: totalQuestions }).map((_, index) => {
               const { statusStyle, icon, srText } = getStatusIconAndStyle(index);
               return (
@@ -121,7 +121,7 @@ export function QuestionNavigationPanel({
         </ScrollArea>
         <div className="mt-5 border-t border-border/50 pt-4">
           <h4 className="text-sm font-semibold uppercase text-muted-foreground mb-3 text-center">Legend</h4>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
             {legendItems.map(item => (
               <div key={item.label} className="flex items-center gap-2">
                 <span className={cn("h-5 w-5 rounded-md inline-flex items-center justify-center shrink-0 border", item.style, quizState === 'reviewing' ? 'p-0.5' : '')}>
@@ -136,5 +136,3 @@ export function QuestionNavigationPanel({
     </Card>
   );
 }
-
-    

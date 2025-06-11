@@ -1,3 +1,4 @@
+
 import type { GenerateMCQsOutput } from '@/ai/flows/generate-mcqs';
 
 export type MCQ = GenerateMCQsOutput extends (infer U)[] ? U : never;
@@ -8,6 +9,8 @@ export interface MCQFormInput {
   subject: string;
   numQuestions: number;
   difficulty: Difficulty;
+  notes?: string;
+  specificExam?: string;
 }
 
 // User's selected answer for a question (index of the option, or null if unanswered)

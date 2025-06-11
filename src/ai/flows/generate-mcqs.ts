@@ -16,6 +16,8 @@ const GenerateMCQsInputSchema = z.object({
   subject: z.string().describe('The subject for which to generate MCQs (e.g., Reasoning, Mathematics, Biology).'),
   numQuestions: z.number().describe('The number of MCQs to generate (e.g., 10, 20, 30, or 50).'),
   difficulty: z.enum(['low', 'moderate', 'high']).describe('The difficulty level of the MCQs.'),
+  specificExam: z.string().optional().describe('Optional specific exam to tailor questions for (e.g., "SAT Math", "JEE Physics"). The AI should try to consider common question styles, topics, or patterns relevant to this exam, potentially including aspects of previous year questions or frequently asked questions if feasible.'),
+  notes: z.string().optional().describe('Optional notes or specific instructions for the AI (e.g., "one-word answers", "focus on definitions", "questions should be scenario-based").'),
 });
 export type GenerateMCQsInput = z.infer<typeof GenerateMCQsInputSchema>;
 
@@ -38,7 +40,17 @@ const generateMCQsPrompt = ai.definePrompt({
   name: 'generateMCQsPrompt',
   input: {schema: GenerateMCQsInputSchema},
   output: {schema: GenerateMCQsOutputSchema},
-  prompt: `You are an expert in creating high-quality multiple-choice questions (MCQs) for educational purposes. Generate exactly {{numQuestions}} MCQs for the subject "{{subject}}" with "{{difficulty}}" difficulty in the specified JSON format.
+  prompt: `You are an expert in creating high-quality multiple-choice questions (MCQs) for educational purposes.
+Generate exactly {{numQuestions}} MCQs for the subject "{{subject}}" with "{{difficulty}}" difficulty in the specified JSON format.
+
+{{#if specificExam}}
+IMPORTANT: The user has specified that these questions are for the "{{specificExam}}" exam.
+Tailor the questions accordingly. If possible, incorporate common question styles, topics, or patterns seen in previous years or frequently asked questions for this exam. Prioritize relevance to this specific exam context.
+{{/if}}
+
+{{#if notes}}
+The user has provided the following notes/instructions, please adhere to them carefully: "{{notes}}"
+{{/if}}
 
 Each question must have:
 - A clear and concise question text relevant to the subject.
@@ -51,7 +63,7 @@ Ensure the questions are appropriate for the specified difficulty:
 - Moderate: Intermediate concepts, requiring some reasoning or application.
 - High: Advanced concepts, complex reasoning, or multi-step problem-solving.
 
-Crucially, ensure all questions are factually accurate, clearly worded, and unambiguous. Double-check that the provided correct answer and explanation are verifiably true for the given subject and difficulty.
+Crucially, ensure all questions are factually accurate, clearly worded, and unambiguous. Double-check that the provided correct answer and explanation are verifiably true for the given subject and difficulty. The questions must be valid and make sense.
 
 The output must be in valid JSON format, with the following structure:
 \`\`\`json
@@ -82,5 +94,3 @@ const generateMCQsFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    

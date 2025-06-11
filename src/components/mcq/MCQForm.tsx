@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -22,7 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { BookText, ListChecks, BarChart3, Sparkles, Loader2, Zap } from 'lucide-react';
+import { BookText, ListChecks, BarChart3, Sparkles, Loader2, Zap, Info, FileText, Edit } from 'lucide-react';
 import type { MCQFormInput, Difficulty } from '@/types/mcq';
 
 const formSchema = z.object({
@@ -39,6 +40,12 @@ const formSchema = z.object({
   difficulty: z.enum(['low', 'moderate', 'high'], {
     required_error: 'Please select a difficulty level.',
   }),
+  specificExam: z.string().max(100, {
+    message: 'Specific exam name must be 100 characters or less.',
+  }).optional(),
+  notes: z.string().max(500, {
+    message: 'Notes must be 500 characters or less.',
+  }).optional(),
 });
 
 interface MCQFormProps {
@@ -69,6 +76,8 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
       subject: '',
       numQuestions: 10,
       difficulty: 'moderate',
+      specificExam: '',
+      notes: '',
     },
   });
 
@@ -95,7 +104,7 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
                 <FormItem>
                   <FormLabel className="flex items-center text-md font-medium">
                     <BookText className="mr-2.5 h-5 w-5 text-primary/80" />
-                    Subject
+                    Subject *
                   </FormLabel>
                   <FormControl>
                     <Input 
@@ -117,7 +126,7 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
                   <FormItem>
                     <FormLabel className="flex items-center text-md font-medium">
                       <ListChecks className="mr-2.5 h-5 w-5 text-primary/80" />
-                      Number of Questions
+                      Number of Questions *
                     </FormLabel>
                     <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={String(field.value)}>
                       <FormControl>
@@ -145,7 +154,7 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
                   <FormItem>
                     <FormLabel className="flex items-center text-md font-medium">
                       <BarChart3 className="mr-2.5 h-5 w-5 text-primary/80" />
-                      Difficulty Level
+                      Difficulty Level *
                     </FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
@@ -166,6 +175,48 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="specificExam"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center text-md font-medium">
+                    <FileText className="mr-2.5 h-5 w-5 text-primary/80" />
+                    Specific Exam (Optional)
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="e.g., SAT Math, UPSC Prelims, AP Biology" 
+                      {...field} 
+                      className="text-base h-12 px-4" 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center text-md font-medium">
+                    <Edit className="mr-2.5 h-5 w-5 text-primary/80" />
+                     Notes / Instructions for AI (Optional)
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="e.g., Focus on definitions, One-word answers only, Include historical context"
+                      className="text-base min-h-[100px] p-4"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             
             <Button type="submit" size="lg" className="w-full text-lg py-7 mt-10 !h-14" disabled={isLoading}>
               {isLoading ? (
@@ -181,5 +232,3 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
     </Card>
   );
 }
-
-    

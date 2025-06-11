@@ -6,18 +6,19 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { MCQForm } from '@/components/mcq/MCQForm';
 import { QuizView } from '@/components/mcq/QuizView';
+import { LoadingModal } from '@/components/mcq/LoadingModal'; 
 import { generateMCQsAction } from '@/app/actions/generateMCQsAction';
 import type { MCQ, MCQFormInput, UserAnswer, MarkedReview, QuizState } from '@/types/mcq';
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, Brain, ArrowRight } from "lucide-react";
+import { Terminal, Brain } from "lucide-react";
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link'; // Added for potential future use if needed for internal links
 
 export default function Home() {
   const [questions, setQuestions] = useState<MCQ[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentTestParams, setCurrentTestParams] = useState<MCQFormInput | null>(null);
   const { toast } = useToast();
@@ -35,17 +36,21 @@ export default function Home() {
     setCurrentQuestionIndex(0);
     setUserAnswers([]);
     setMarkedForReview([]);
+    setShowLoadingModal(false);
   };
 
   const handleFormSubmit = async (data: MCQFormInput) => {
     setIsLoading(true);
+    setShowLoadingModal(true);
     setError(null);
     setQuestions(null);
     setCurrentTestParams(data);
     setQuizState('form'); 
 
     const result = await generateMCQsAction(data);
+    
     setIsLoading(false);
+    setShowLoadingModal(false);
 
     if (result.error) {
       setError(result.error);
@@ -141,7 +146,13 @@ export default function Home() {
 
     let textContent = `ScholarQuiz Results\n=====================\n\n`;
     textContent += `Subject: ${currentTestParams.subject}\n`;
-    textContent += `Number of Questions: ${questions.length} (Generated: ${currentTestParams.numQuestions})\n`;
+    if (currentTestParams.specificExam) {
+      textContent += `Exam Focus: ${currentTestParams.specificExam}\n`;
+    }
+    if (currentTestParams.notes) {
+      textContent += `User Notes: ${currentTestParams.notes}\n`;
+    }
+    textContent += `Number of Questions: ${questions.length} (Requested: ${currentTestParams.numQuestions})\n`;
     textContent += `Difficulty: ${currentTestParams.difficulty}\n\n`;
     textContent += `----------------------------------------\n\n`;
 
@@ -186,6 +197,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-grow container mx-auto px-4 py-10 sm:py-16">
+        <LoadingModal isOpen={showLoadingModal} />
         {quizState === 'form' && (
           <>
             <section className="mb-16 md:mb-20 text-center">
@@ -199,7 +211,7 @@ export default function Home() {
               </p>
             </section>
             
-            <div className="grid md:grid-cols-5 gap-10 lg:gap-16 items-center mb-16 md:mb-20">
+            <div className="grid md:grid-cols-5 gap-10 lg:gap-16 items-start mb-16 md:mb-20">
               <div className="md:col-span-3 order-2 md:order-1">
                 <MCQForm onSubmit={handleFormSubmit} isLoading={isLoading} />
               </div>
@@ -217,7 +229,7 @@ export default function Home() {
             </div>
 
             <section className="text-center py-12 md:py-16 bg-muted/30 dark:bg-muted/20 rounded-xl mb-16 md:mb-20">
-                <h3 className="text-3xl font-headline font-semibold mb-6 text-foreground">How it Works</h3>
+                <h3 className="text-3xl font-headline font-semibold mb-10 text-foreground">How it Works</h3>
                 <div className="max-w-4xl mx-auto grid sm:grid-cols-3 gap-8 px-6">
                     <div className="flex flex-col items-center p-6 bg-card rounded-lg shadow-lg">
                         <div className="bg-primary/10 text-primary p-4 rounded-full mb-4">
@@ -231,7 +243,7 @@ export default function Home() {
                            <span className="text-2xl font-bold">2</span>
                         </div>
                         <h4 className="text-xl font-semibold mb-2">Set Parameters</h4>
-                        <p className="text-muted-foreground text-center">Choose number of questions & difficulty.</p>
+                        <p className="text-muted-foreground text-center">Choose number of questions & difficulty. Add optional notes.</p>
                     </div>
                      <div className="flex flex-col items-center p-6 bg-card rounded-lg shadow-lg">
                         <div className="bg-primary/10 text-primary p-4 rounded-full mb-4">
@@ -286,5 +298,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
