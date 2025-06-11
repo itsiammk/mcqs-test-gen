@@ -16,8 +16,8 @@ const GenerateMCQsInputSchema = z.object({
   subject: z.string().describe('The subject for which to generate MCQs (e.g., Reasoning, Mathematics, Biology).'),
   numQuestions: z.number().describe('The number of MCQs to generate (e.g., 10, 20, 30, or 50).'),
   difficulty: z.enum(['low', 'moderate', 'high']).describe('The difficulty level of the MCQs.'),
-  specificExam: z.string().optional().describe('Optional specific exam to tailor questions for (e.g., "SAT Math", "JEE Physics"). The AI should try to consider common question styles, topics, or patterns relevant to this exam, potentially including aspects of previous year questions or frequently asked questions if feasible.'),
-  notes: z.string().optional().describe('Optional notes or specific instructions for the AI (e.g., "one-word answers", "focus on definitions", "questions should be scenario-based").'),
+  specificExam: z.string().optional().describe('Optional specific exam to tailor questions for (e.g., "SAT Math", "JEE Physics"). The AI should try to consider common question styles, topics, or patterns relevant to this exam. If direct knowledge of past papers is unavailable, focus on generating high-quality questions typical for this exam\'s scope and subject matter.'),
+  notes: z.string().optional().describe('Optional notes or specific instructions for the AI (e.g., "one-word answers", "focus on definitions", "questions should be scenario-based"). Adhere to these notes carefully.'),
 });
 export type GenerateMCQsInput = z.infer<typeof GenerateMCQsInputSchema>;
 
@@ -41,31 +41,38 @@ const generateMCQsPrompt = ai.definePrompt({
   input: {schema: GenerateMCQsInputSchema},
   output: {schema: GenerateMCQsOutputSchema},
   prompt: `You are an expert in creating high-quality multiple-choice questions (MCQs) for educational purposes.
+Your primary goal is to generate factually accurate, clear, unambiguous, and valid questions.
 Generate exactly {{numQuestions}} MCQs for the subject "{{subject}}" with "{{difficulty}}" difficulty in the specified JSON format.
 
 {{#if specificExam}}
 IMPORTANT: The user has specified that these questions are for the "{{specificExam}}" exam.
-Tailor the questions accordingly. If possible, incorporate common question styles, topics, or patterns seen in previous years or frequently asked questions for this exam. Prioritize relevance to this specific exam context.
+Tailor the questions accordingly. If you have knowledge of common question styles, topics, patterns, or frequently asked concepts for the "{{specificExam}}", please incorporate those.
+If specific knowledge of past papers for "{{specificExam}}" is not available to you, focus on generating high-quality questions that are typical for this exam's general scope, subject matter, and style.
+Do NOT invent or hallucinate past paper questions if you don't know them.
+Prioritize relevance to this specific exam context based on general knowledge of such exams.
 {{/if}}
 
 {{#if notes}}
-The user has provided the following notes/instructions, please adhere to them carefully: "{{notes}}"
+The user has provided the following notes/instructions, please adhere to them carefully and precisely: "{{notes}}"
 {{/if}}
 
 Each question must have:
-- A clear and concise question text relevant to the subject.
+- A clear and concise question text relevant to the subject. The question itself must be valid and make logical sense.
 - Exactly 4 answer options, labeled as strings.
 - A correct answer indicated by the index of the correct option (0, 1, 2, or 3).
-- A brief explanation (1–2 sentences) explaining why the correct answer is correct and, if relevant, why others are incorrect.
+- A brief explanation (1–2 sentences) explaining why the correct answer is correct and, if relevant, why others are incorrect. This explanation must be accurate.
 
 Ensure the questions are appropriate for the specified difficulty:
 - Low: Basic concepts, foundational knowledge, simple application.
 - Moderate: Intermediate concepts, requiring some reasoning or application.
 - High: Advanced concepts, complex reasoning, or multi-step problem-solving.
 
-Crucially, ensure all questions are factually accurate, clearly worded, and unambiguous. Double-check that the provided correct answer and explanation are verifiably true for the given subject and difficulty. The questions must be valid and make sense.
+CRITICAL: Double-check and triple-check all generated content for factual accuracy.
+Ensure the question is well-posed, the options are plausible yet distinct, the provided correct answer is verifiably true, and the explanation correctly supports the answer.
+Avoid overly ambiguous or subjective questions; focus on clear, objective content suitable for a test environment.
+If the subject is broad (e.g., Reasoning), cover a variety of relevant topics within it (e.g., logical reasoning, analytical reasoning, verbal reasoning).
 
-The output must be in valid JSON format, with the following structure:
+The output must be in valid JSON format, with the following structure. Do not include any text outside this JSON structure.
 \`\`\`json
 [
   {
@@ -78,8 +85,6 @@ The output must be in valid JSON format, with the following structure:
 ]
 \`\`\`
 Ensure the JSON is properly formatted, with no missing fields or syntax errors.
-Avoid overly ambiguous or subjective questions; focus on clear, objective content suitable for a test environment.
-If the subject is broad (e.g., Reasoning), cover a variety of relevant topics within it (e.g., logical reasoning, analytical reasoning, verbal reasoning).
 `,
 });
 

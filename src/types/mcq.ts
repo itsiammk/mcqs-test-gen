@@ -11,6 +11,7 @@ export interface MCQFormInput {
   difficulty: Difficulty;
   notes?: string;
   specificExam?: string;
+  timeLimitMinutes?: number; // Added time limit in minutes
 }
 
 // User's selected answer for a question (index of the option, or null if unanswered)

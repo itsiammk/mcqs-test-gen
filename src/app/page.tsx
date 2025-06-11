@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { MCQForm } from '@/components/mcq/MCQForm';
@@ -11,8 +11,7 @@ import { generateMCQsAction } from '@/app/actions/generateMCQsAction';
 import type { MCQ, MCQFormInput, UserAnswer, MarkedReview, QuizState } from '@/types/mcq';
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, Brain } from "lucide-react";
-import Image from 'next/image';
+import { Terminal, Brain, BookOpen, ListChecksIcon, ZapIcon } from "lucide-react";
 import { Button } from '@/components/ui/button';
 
 export default function Home() {
@@ -28,7 +27,10 @@ export default function Home() {
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [markedForReview, setMarkedForReview] = useState<MarkedReview[]>([]);
 
-  const resetQuizState = () => {
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+
+  const resetQuizState = useCallback(() => {
     setQuestions(null);
     setError(null);
     setCurrentTestParams(null);
@@ -37,7 +39,38 @@ export default function Home() {
     setUserAnswers([]);
     setMarkedForReview([]);
     setShowLoadingModal(false);
-  };
+    setTimeLeft(null);
+    setIsTimerRunning(false);
+  }, []);
+
+  const handleSubmitTest = useCallback(() => {
+    setQuizState('submitted');
+    setIsTimerRunning(false);
+    toast({
+      title: "Test Submitted!",
+      description: "You can now review your answers or start a new test.",
+    });
+  }, [toast]);
+
+  useEffect(() => {
+    let timerId: NodeJS.Timeout | null = null;
+    if (isTimerRunning && timeLeft !== null && timeLeft > 0) {
+      timerId = setInterval(() => {
+        setTimeLeft(prevTime => (prevTime !== null ? prevTime - 1 : null));
+      }, 1000);
+    } else if (isTimerRunning && timeLeft === 0) {
+      handleSubmitTest();
+      toast({
+        variant: "destructive",
+        title: "Time's Up!",
+        description: "Your test has been automatically submitted.",
+      });
+    }
+    return () => {
+      if (timerId) clearInterval(timerId);
+    };
+  }, [isTimerRunning, timeLeft, handleSubmitTest, toast]);
+
 
   const handleFormSubmit = async (data: MCQFormInput) => {
     setIsLoading(true);
@@ -66,6 +99,13 @@ export default function Home() {
       setMarkedForReview(new Array(result.data.length).fill(false));
       setCurrentQuestionIndex(0);
       setQuizState('taking');
+      if (data.timeLimitMinutes && data.timeLimitMinutes > 0) {
+        setTimeLeft(data.timeLimitMinutes * 60);
+        setIsTimerRunning(true);
+      } else {
+        setTimeLeft(null);
+        setIsTimerRunning(false);
+      }
       toast({
         title: "Success!",
         description: `${result.data.length} questions generated for ${data.subject}. Good luck!`,
@@ -115,7 +155,7 @@ export default function Home() {
 
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+      setCurrentQuestionIndex(prev => prev + 1);
     }
   };
 
@@ -123,14 +163,6 @@ export default function Home() {
     if (questions && index >= 0 && index < questions.length) {
       setCurrentQuestionIndex(index);
     }
-  };
-
-  const handleSubmitTest = () => {
-    setQuizState('submitted');
-    toast({
-      title: "Test Submitted!",
-      description: "You can now review your answers or start a new test.",
-    });
   };
   
   const handleStartReview = () => {
@@ -146,6 +178,15 @@ export default function Home() {
 
     let textContent = `ScholarQuiz Results\n=====================\n\n`;
     textContent += `Subject: ${currentTestParams.subject}\n`;
+    if (currentTestParams.timeLimitMinutes && currentTestParams.timeLimitMinutes > 0) {
+      const timeTaken = (currentTestParams.timeLimitMinutes * 60) - (timeLeft ?? 0);
+      const minutes = Math.floor(timeTaken / 60);
+      const seconds = timeTaken % 60;
+      textContent += `Time Limit: ${currentTestParams.timeLimitMinutes} minutes\n`;
+      if (quizState === 'submitted' || quizState === 'reviewing') {
+         textContent += `Time Taken: ${minutes}m ${seconds}s\n`;
+      }
+    }
     if (currentTestParams.specificExam) {
       textContent += `Exam Focus: ${currentTestParams.specificExam}\n`;
     }
@@ -193,73 +234,68 @@ export default function Home() {
       });
   };
 
+
+  const featureCards = [
+    {
+      icon: <BookOpen className="h-10 w-10 text-accent" />,
+      title: "Enter Subject",
+      description: "Input your desired topic or subject area for the quiz.",
+    },
+    {
+      icon: <ListChecksIcon className="h-10 w-10 text-accent" />,
+      title: "Set Parameters",
+      description: "Choose number of questions, difficulty, and time limit. Add optional notes.",
+    },
+    {
+      icon: <ZapIcon className="h-10 w-10 text-accent" />,
+      title: "Get Your Quiz!",
+      description: "Our AI crafts a unique, tailored quiz just for you in seconds.",
+    },
+  ];
+
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-10 sm:py-16">
+      <main className="flex-grow container mx-auto px-4 py-12 sm:py-20">
         <LoadingModal isOpen={showLoadingModal} />
         {quizState === 'form' && (
           <>
-            <section className="mb-16 md:mb-20 text-center">
-              <Brain className="mx-auto h-20 w-20 text-primary mb-6 animate-pulse" />
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-headline font-bold mb-6 text-foreground">
+            <section className="mb-16 md:mb-24 text-center">
+              <Brain className="mx-auto h-24 w-24 text-primary mb-8 animate-pulse" />
+              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-headline font-bold mb-8 text-foreground">
                 Welcome to ScholarQuiz!
               </h2>
-              <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+              <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12">
                 Generate custom multiple-choice quizzes on any subject to supercharge your learning.
                 Just pick your topic, number of questions, and difficulty level to get started.
               </p>
             </section>
             
-            <div className="grid md:grid-cols-5 gap-10 lg:gap-16 items-start mb-16 md:mb-20">
-              <div className="md:col-span-3 order-2 md:order-1">
+            <div className="mb-16 md:mb-24">
                 <MCQForm onSubmit={handleFormSubmit} isLoading={isLoading} />
-              </div>
-              <div className="md:col-span-2 order-1 md:order-2 flex justify-center items-center p-4 md:p-0">
-                 <Image 
-                  src="https://placehold.co/600x450.png" 
-                  alt="Students studying for a quiz" 
-                  width={600} 
-                  height={450}
-                  className="rounded-xl shadow-2xl object-cover aspect-[4/3]"
-                  data-ai-hint="education learning"
-                  priority
-                />
-              </div>
             </div>
 
-            <section className="text-center py-12 md:py-16 bg-muted/30 dark:bg-muted/20 rounded-xl mb-16 md:mb-20">
-                <h3 className="text-3xl font-headline font-semibold mb-10 text-foreground">How it Works</h3>
-                <div className="max-w-4xl mx-auto grid sm:grid-cols-3 gap-8 px-6">
-                    <div className="flex flex-col items-center p-6 bg-card rounded-lg shadow-lg">
-                        <div className="bg-primary/10 text-primary p-4 rounded-full mb-4">
-                           <span className="text-2xl font-bold">1</span>
-                        </div>
-                        <h4 className="text-xl font-semibold mb-2">Enter Subject</h4>
-                        <p className="text-muted-foreground text-center">Input your desired topic or subject area.</p>
-                    </div>
-                     <div className="flex flex-col items-center p-6 bg-card rounded-lg shadow-lg">
-                        <div className="bg-primary/10 text-primary p-4 rounded-full mb-4">
-                           <span className="text-2xl font-bold">2</span>
-                        </div>
-                        <h4 className="text-xl font-semibold mb-2">Set Parameters</h4>
-                        <p className="text-muted-foreground text-center">Choose number of questions & difficulty. Add optional notes.</p>
-                    </div>
-                     <div className="flex flex-col items-center p-6 bg-card rounded-lg shadow-lg">
-                        <div className="bg-primary/10 text-primary p-4 rounded-full mb-4">
-                           <span className="text-2xl font-bold">3</span>
-                        </div>
-                        <h4 className="text-xl font-semibold mb-2">Get Quiz!</h4>
-                        <p className="text-muted-foreground text-center">Our AI crafts a unique quiz just for you.</p>
-                    </div>
+            <section className="text-center py-16 md:py-24 bg-muted/50 dark:bg-muted/30 rounded-xl mb-16 md:mb-20">
+                <h3 className="text-4xl font-headline font-semibold mb-16 text-foreground">How it Works</h3>
+                <div className="max-w-5xl mx-auto grid sm:grid-cols-1 md:grid-cols-3 gap-10 px-6">
+                    {featureCards.map((feature, index) => (
+                       <div key={index} className="flex flex-col items-center p-8 bg-card rounded-xl shadow-2xl transform hover:scale-105 transition-transform duration-300">
+                           <div className="p-5 rounded-full mb-6 bg-primary/10">
+                              {feature.icon}
+                           </div>
+                           <h4 className="text-2xl font-semibold mb-3 text-foreground">{feature.title}</h4>
+                           <p className="text-lg text-muted-foreground text-center leading-relaxed">{feature.description}</p>
+                       </div>
+                    ))}
                 </div>
             </section>
 
             {error && !isLoading && (
-              <Alert variant="destructive" className="my-10 max-w-2xl mx-auto p-6">
+              <Alert variant="destructive" className="my-12 max-w-2xl mx-auto p-6 shadow-lg">
                 <Terminal className="h-6 w-6" />
-                <AlertTitle className="text-lg">Generation Error</AlertTitle>
-                <AlertDescription className="text-base">{error}</AlertDescription>
+                <AlertTitle className="text-xl font-semibold">Generation Error</AlertTitle>
+                <AlertDescription className="text-lg mt-2">{error}</AlertDescription>
               </Alert>
             )}
           </>
@@ -273,6 +309,8 @@ export default function Home() {
             userAnswers={userAnswers}
             markedForReview={markedForReview}
             quizState={quizState}
+            timeLeft={timeLeft}
+            isTimerRunning={isTimerRunning}
             onSelectAnswer={handleSelectAnswer}
             onMarkForReview={handleMarkForReview}
             onClearChoice={handleClearChoice}
@@ -286,11 +324,11 @@ export default function Home() {
           />
         )}
          {quizState !== 'form' && error && !isLoading && (
-           <Alert variant="destructive" className="my-10 p-6">
+           <Alert variant="destructive" className="my-10 p-6 shadow-lg">
              <Terminal className="h-5 w-5" />
-             <AlertTitle className="text-lg">Error</AlertTitle>
-             <AlertDescription className="text-base">{error} Please try starting a new test.</AlertDescription>
-             <Button onClick={handleStartNewTest} variant="outline" className="mt-6">Start New Test</Button>
+             <AlertTitle className="text-xl font-semibold">Error</AlertTitle>
+             <AlertDescription className="text-lg mt-2">{error} Please try starting a new test.</AlertDescription>
+             <Button onClick={handleStartNewTest} variant="outline" size="lg" className="mt-8 h-12 text-lg">Start New Test</Button>
            </Alert>
          )}
       </main>

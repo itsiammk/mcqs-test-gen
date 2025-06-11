@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { BookText, ListChecks, BarChart3, Sparkles, Loader2, Zap, Info, FileText, Edit } from 'lucide-react';
+import { BookText, ListChecks, BarChart3, Sparkles, Loader2, Zap, FileText, Edit, Timer } from 'lucide-react';
 import type { MCQFormInput, Difficulty } from '@/types/mcq';
 
 const formSchema = z.object({
@@ -40,6 +40,7 @@ const formSchema = z.object({
   difficulty: z.enum(['low', 'moderate', 'high'], {
     required_error: 'Please select a difficulty level.',
   }),
+  timeLimitMinutes: z.coerce.number().optional(),
   specificExam: z.string().max(100, {
     message: 'Specific exam name must be 100 characters or less.',
   }).optional(),
@@ -69,6 +70,18 @@ const difficultyOptions: { value: Difficulty; label: string }[] = [
   { value: 'high', label: '🚀 High' },
 ];
 
+const timeLimitOptions = [
+  { value: 0, label: 'No Limit' },
+  { value: 5, label: '5 Minutes' },
+  { value: 10, label: '10 Minutes' },
+  { value: 15, label: '15 Minutes' },
+  { value: 30, label: '30 Minutes' },
+  { value: 45, label: '45 Minutes' },
+  { value: 60, label: '60 Minutes' },
+  { value: 90, label: '90 Minutes' },
+  { value: 120, label: '120 Minutes' },
+];
+
 export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -76,6 +89,7 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
       subject: '',
       numQuestions: 10,
       difficulty: 'moderate',
+      timeLimitMinutes: 0,
       specificExam: '',
       notes: '',
     },
@@ -86,13 +100,15 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
   }
 
   return (
-    <Card className="w-full shadow-xl border-border/60 p-2 sm:p-4">
-      <CardHeader className="pb-6">
-        <CardTitle className="text-2xl sm:text-3xl font-headline flex items-center">
-          <Zap className="mr-3 h-8 w-8 text-primary" />
+    <Card className="w-full max-w-2xl mx-auto shadow-xl border-border/60 p-4 sm:p-6">
+      <CardHeader className="pb-6 text-center">
+        <Zap className="mx-auto h-12 w-12 text-primary mb-4" />
+        <CardTitle className="text-3xl sm:text-4xl font-headline">
           Create Your Quiz
         </CardTitle>
-        <CardDescription className="text-base pt-1">Fill in the details below to generate your personalized MCQs.</CardDescription>
+        <CardDescription className="text-lg pt-2 text-muted-foreground">
+          Fill in the details to generate personalized MCQs.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -102,8 +118,8 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
               name="subject"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center text-md font-medium">
-                    <BookText className="mr-2.5 h-5 w-5 text-primary/80" />
+                  <FormLabel className="flex items-center text-lg font-medium">
+                    <BookText className="mr-3 h-6 w-6 text-primary/90" />
                     Subject *
                   </FormLabel>
                   <FormControl>
@@ -124,8 +140,8 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
                 name="numQuestions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center text-md font-medium">
-                      <ListChecks className="mr-2.5 h-5 w-5 text-primary/80" />
+                    <FormLabel className="flex items-center text-lg font-medium">
+                      <ListChecks className="mr-3 h-6 w-6 text-primary/90" />
                       Number of Questions *
                     </FormLabel>
                     <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={String(field.value)}>
@@ -152,8 +168,8 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
                 name="difficulty"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center text-md font-medium">
-                      <BarChart3 className="mr-2.5 h-5 w-5 text-primary/80" />
+                    <FormLabel className="flex items-center text-lg font-medium">
+                      <BarChart3 className="mr-3 h-6 w-6 text-primary/90" />
                       Difficulty Level *
                     </FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -175,14 +191,42 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
                 )}
               />
             </div>
+            
+            <FormField
+              control={form.control}
+              name="timeLimitMinutes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center text-lg font-medium">
+                    <Timer className="mr-3 h-6 w-6 text-primary/90" />
+                    Time Limit (Optional)
+                  </FormLabel>
+                  <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={String(field.value)}>
+                    <FormControl>
+                      <SelectTrigger className="text-base h-12 px-4">
+                        <SelectValue placeholder="Select time limit" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {timeLimitOptions.map((option) => (
+                        <SelectItem key={option.value} value={String(option.value)} className="text-base py-2.5">
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
               name="specificExam"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center text-md font-medium">
-                    <FileText className="mr-2.5 h-5 w-5 text-primary/80" />
+                  <FormLabel className="flex items-center text-lg font-medium">
+                    <FileText className="mr-3 h-6 w-6 text-primary/90" />
                     Specific Exam (Optional)
                   </FormLabel>
                   <FormControl>
@@ -202,14 +246,14 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center text-md font-medium">
-                    <Edit className="mr-2.5 h-5 w-5 text-primary/80" />
+                  <FormLabel className="flex items-center text-lg font-medium">
+                    <Edit className="mr-3 h-6 w-6 text-primary/90" />
                      Notes / Instructions for AI (Optional)
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="e.g., Focus on definitions, One-word answers only, Include historical context"
-                      className="text-base min-h-[100px] p-4"
+                      className="text-base min-h-[120px] p-4"
                       {...field}
                     />
                   </FormControl>
@@ -218,7 +262,7 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
               )}
             />
             
-            <Button type="submit" size="lg" className="w-full text-lg py-7 mt-10 !h-14" disabled={isLoading}>
+            <Button type="submit" size="lg" className="w-full text-lg py-7 mt-10 !h-16" disabled={isLoading}>
               {isLoading ? (
                 <Loader2 className="mr-2.5 h-6 w-6 animate-spin" />
               ) : (
