@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Trash2, Flag, Send } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RotateCcw, Flag, Send, Trash2Icon } from 'lucide-react';
 import type { QuizState } from '@/types/mcq';
 import { cn } from '@/lib/utils';
 
@@ -33,64 +33,81 @@ export function QuizControls({
   
   if (quizState === 'reviewing') {
     return (
-      <div className="mt-6 flex justify-between items-center p-4 bg-card rounded-lg shadow">
-        <Button onClick={onPrevious} disabled={currentQuestionIndex === 0} variant="outline">
-          <ChevronLeft className="mr-2 h-4 w-4" /> Previous
+      <div className="mt-6 flex justify-between items-center p-4 bg-card rounded-lg shadow-md border border-border/60">
+        <Button 
+            onClick={onPrevious} 
+            disabled={currentQuestionIndex === 0} 
+            variant="outline" 
+            size="lg"
+        >
+          <ChevronLeft className="mr-2 h-5 w-5" /> Previous
         </Button>
-        <span className="text-sm text-muted-foreground">
-          Viewing question {currentQuestionIndex + 1} of {totalQuestions}
+        <span className="text-sm font-medium text-muted-foreground hidden sm:block">
+          Reviewing: Question {currentQuestionIndex + 1} of {totalQuestions}
         </span>
-        <Button onClick={onNext} disabled={currentQuestionIndex === totalQuestions - 1} variant="outline">
-          Next <ChevronRight className="ml-2 h-4 w-4" />
+        <Button 
+            onClick={onNext} 
+            disabled={currentQuestionIndex === totalQuestions - 1} 
+            variant="outline" 
+            size="lg"
+        >
+          Next <ChevronRight className="ml-2 h-5 w-5" />
         </Button>
       </div>
     );
   }
 
   if (quizState === 'submitted') {
-    return null; // No controls needed once submitted, actions are on QuizView
+    return null; 
   }
 
   // Taking quiz controls
   return (
-    <div className="mt-6 p-4 bg-card rounded-lg shadow">
+    <div className="mt-6 p-4 bg-card rounded-lg shadow-md border border-border/60">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4">
         <Button 
           onClick={onPrevious} 
           disabled={currentQuestionIndex === 0} 
           variant="outline"
           className="w-full sm:w-auto"
+          size="lg"
         >
-          <ChevronLeft className="mr-2 h-4 w-4" /> Previous
+          <ChevronLeft className="mr-2 h-5 w-5" /> Previous
         </Button>
+        
         {currentQuestionIndex < totalQuestions - 1 ? (
           <Button 
             onClick={onNext} 
-            variant="default" // Make "Save & Next" more prominent
+            variant="default"
             className="w-full sm:w-auto"
+            size="lg"
           >
-            Save & Next <ChevronRight className="ml-2 h-4 w-4" />
+            Save & Next <ChevronRight className="ml-2 h-5 w-5" />
           </Button>
         ) : (
           <Button 
             onClick={onSubmitTest} 
-            variant="primary"  // Use primary variant for submit
-            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
+            variant="primary"
+            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white dark:bg-green-500 dark:hover:bg-green-600"
+            size="lg"
           >
-            <Send className="mr-2 h-4 w-4" /> Submit Test
+            <Send className="mr-2 h-5 w-5" /> Submit Test
           </Button>
         )}
       </div>
-      <div className="flex flex-wrap justify-start items-center gap-3 border-t pt-4">
+      <div className="flex flex-wrap justify-start items-center gap-3 border-t border-border/50 pt-4">
         <Button 
           onClick={onMarkForReview} 
-          variant={isMarked ? "secondary" : "outline"} 
-          className={cn(isMarked && "bg-yellow-400 border-yellow-500 text-yellow-900 hover:bg-yellow-500/90 dark:bg-yellow-600 dark:border-yellow-700 dark:text-yellow-100 dark:hover:bg-yellow-700")}
+          variant="outline"
+          className={cn(
+            "text-sm",
+            isMarked && "bg-yellow-400/80 border-yellow-500 text-yellow-900 hover:bg-yellow-500/80 dark:bg-yellow-500/70 dark:border-yellow-600 dark:text-yellow-900 dark:hover:bg-yellow-600/70"
+          )}
         >
           <Flag className="mr-2 h-4 w-4" /> {isMarked ? 'Unmark Review' : 'Mark for Review'}
         </Button>
-        <Button onClick={onClearChoice} variant="outline" disabled={!canClearChoice}>
-          <Trash2 className="mr-2 h-4 w-4" /> Clear Choice
+        <Button onClick={onClearChoice} variant="outline" className="text-sm" disabled={!canClearChoice}>
+          <RotateCcw className="mr-2 h-4 w-4" /> Clear Choice
         </Button>
       </div>
     </div>

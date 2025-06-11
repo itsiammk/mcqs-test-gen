@@ -5,10 +5,9 @@ import { QuestionCard } from './QuestionCard';
 import { QuestionNavigationPanel } from './QuestionNavigationPanel';
 import { QuizControls } from './QuizControls';
 import { Button } from '@/components/ui/button';
-import { Download, ListRestart, Eye, Info } from 'lucide-react';
+import { Download, ListRestart, Eye, Info, CheckCircle, Award } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
 
 interface QuizViewProps {
   questions: MCQ[];
@@ -50,71 +49,84 @@ export function QuizView({
   const currentQuestion = questions[currentQuestionIndex];
 
   let score = 0;
+  let scorePercentage = 0;
   if (quizState === 'reviewing' || quizState === 'submitted') {
     questions.forEach((q, idx) => {
       if (userAnswers[idx] === q.correctAnswer) {
         score++;
       }
     });
+    scorePercentage = questions.length > 0 ? (score / questions.length) * 100 : 0;
   }
 
+  const quizTitle = 
+    quizState === 'reviewing' ? 'Review Your Answers' : 
+    quizState === 'submitted' ? 'Test Submitted!' : 
+    `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+
   return (
-    <div className="mt-6">
+    <div className="mt-2 sm:mt-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h2 className="text-3xl font-headline font-semibold">
-          {quizState === 'reviewing' ? 'Review Your Answers' : 
-           quizState === 'submitted' ? 'Test Submitted' : 
-           `Question ${currentQuestionIndex + 1} of ${questions.length}`}
+        <h2 className="text-2xl sm:text-3xl font-headline font-semibold text-center sm:text-left">
+          {quizTitle}
         </h2>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2 justify-center">
           {quizState === 'submitted' && (
-            <Button onClick={onStartReview} variant="outline" className="bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button onClick={onStartReview} variant="default" size="sm">
               <Eye className="mr-2 h-4 w-4" /> Review Answers
             </Button>
           )}
-          {quizState === 'reviewing' && (
-             <Button onClick={onExportResults} variant="outline">
+          {(quizState === 'reviewing' || quizState === 'submitted') && (
+             <Button onClick={onExportResults} variant="outline" size="sm">
                 <Download className="mr-2 h-4 w-4" /> Export Results
              </Button>
           )}
-          <Button onClick={onStartNewTest} variant="destructive">
+          <Button onClick={onStartNewTest} variant="destructive" size="sm">
             <ListRestart className="mr-2 h-4 w-4" /> Start New Test
           </Button>
         </div>
       </div>
       
-      <Alert className="mb-6 bg-card border-border text-foreground shadow">
+      <Alert className="mb-6 bg-card border-border/60 text-foreground shadow-sm">
         <Info className="h-5 w-5 text-primary" />
         <AlertTitle className="font-headline text-primary">Test Details</AlertTitle>
-        <AlertDescription className="text-muted-foreground">
-          Subject: <span className="font-semibold">{testParams.subject}</span> | 
-          Questions: <span className="font-semibold">{testParams.numQuestions}</span> | 
-          Difficulty: <span className="font-semibold capitalize">{testParams.difficulty}</span>
+        <AlertDescription className="text-sm text-muted-foreground">
+          Subject: <span className="font-semibold text-foreground">{testParams.subject}</span> | 
+          Questions: <span className="font-semibold text-foreground">{questions.length}</span> | 
+          Difficulty: <span className="font-semibold capitalize text-foreground">{testParams.difficulty}</span>
           {(quizState === 'reviewing' || quizState === 'submitted') && (
             <>
-              {' | '} Score: <span className="font-semibold">{score}/{questions.length} ({(score/questions.length * 100).toFixed(1)}%)</span>
+              {' | '} Score: <span className="font-semibold text-foreground">{score}/{questions.length} ({scorePercentage.toFixed(1)}%)</span>
             </>
           )}
         </AlertDescription>
       </Alert>
 
       {quizState === 'submitted' && (
-         <Card className="text-center p-8 shadow-xl my-8">
-           <CardHeader>
-            <CardTitle className="text-2xl font-semibold mb-4">Test Submitted Successfully!</CardTitle>
+         <Card className="text-center p-6 sm:p-8 shadow-xl my-8 bg-gradient-to-br from-card to-muted/30">
+           <CardHeader className="pb-2">
+            <Award className="mx-auto h-16 w-16 text-yellow-500 mb-4" />
+            <CardTitle className="text-2xl sm:text-3xl font-semibold mb-2">Test Completed!</CardTitle>
            </CardHeader>
            <CardContent>
-            <p className="text-muted-foreground mb-6">
-              You have completed the test. Your score is {score} out of {questions.length}.
-              Click "Review Answers" to see the detailed solutions or "Start New Test" to try another quiz.
+            <p className="text-muted-foreground text-lg mb-6">
+              Great job on finishing the test! Your score is <strong className="text-foreground">{score} out of {questions.length}</strong> ({scorePercentage.toFixed(1)}%).
             </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button onClick={onStartReview} size="lg">
+                    <Eye className="mr-2 h-5 w-5" /> Review Answers
+                </Button>
+                <Button onClick={onStartNewTest} variant="outline" size="lg">
+                    <ListRestart className="mr-2 h-5 w-5" /> Start Another Test
+                </Button>
+            </div>
            </CardContent>
         </Card>
       )}
 
       {(quizState === 'taking' || quizState === 'reviewing') && currentQuestion && (
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="md:flex-grow order-2 md:order-1">
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="lg:flex-grow order-2 lg:order-1 min-w-0"> {/* Added min-w-0 for flex child issues */}
             <QuestionCard
               key={`${currentQuestionIndex}-${quizState}`} 
               question={currentQuestion}
@@ -137,7 +149,7 @@ export function QuizView({
               canClearChoice={userAnswers[currentQuestionIndex] !== null && quizState === 'taking'}
             />
           </div>
-          <div className="md:w-64 lg:w-72 order-1 md:order-2 flex-shrink-0">
+          <div className="lg:w-72 xl:w-80 order-1 lg:order-2 flex-shrink-0">
             <QuestionNavigationPanel
               questions={questions}
               totalQuestions={questions.length}
