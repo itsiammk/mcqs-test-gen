@@ -100,65 +100,67 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto shadow-xl border-border/60 p-4 sm:p-6">
-      <CardHeader className="pb-6 text-center">
-        <Zap className="mx-auto h-12 w-12 text-primary mb-4" />
-        <CardTitle className="text-3xl sm:text-4xl font-headline">
-          Create Your Quiz
-        </CardTitle>
-        <CardDescription className="text-lg pt-2 text-muted-foreground">
+    <Card className="w-full shadow-lg border-border/50 p-3 sm:p-5">
+      <CardHeader className="pb-4 text-center sm:text-left">
+        <div className="flex items-center justify-center sm:justify-start mb-3">
+            <Zap className="h-8 w-8 text-primary mr-3" />
+            <CardTitle className="text-2xl sm:text-3xl font-headline">
+            Quiz Parameters
+            </CardTitle>
+        </div>
+        <CardDescription className="text-md text-muted-foreground">
           Fill in the details to generate personalized MCQs.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-2">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="subject"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center text-lg font-medium">
-                    <BookText className="mr-3 h-6 w-6 text-primary/90" />
+                  <FormLabel className="flex items-center text-md font-medium">
+                    <BookText className="mr-2 h-5 w-5 text-primary/90" />
                     Subject *
                   </FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="e.g., Organic Chemistry, World War II, Calculus" 
-                      {...field} 
-                      className="text-base h-12 px-4" 
+                    <Input
+                      placeholder="e.g., Organic Chemistry, World War II"
+                      {...field}
+                      className="text-sm h-11 px-3"
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
               <FormField
                 control={form.control}
                 name="numQuestions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center text-lg font-medium">
-                      <ListChecks className="mr-3 h-6 w-6 text-primary/90" />
+                    <FormLabel className="flex items-center text-md font-medium">
+                      <ListChecks className="mr-2 h-5 w-5 text-primary/90" />
                       Number of Questions *
                     </FormLabel>
                     <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={String(field.value)}>
                       <FormControl>
-                        <SelectTrigger className="text-base h-12 px-4">
+                        <SelectTrigger className="text-sm h-11 px-3">
                           <SelectValue placeholder="Select number" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {numQuestionOptions.map((option) => (
-                          <SelectItem key={option.value} value={String(option.value)} className="text-base py-2.5">
+                          <SelectItem key={option.value} value={String(option.value)} className="text-sm py-2">
                             {option.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
@@ -168,105 +170,107 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
                 name="difficulty"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center text-lg font-medium">
-                      <BarChart3 className="mr-3 h-6 w-6 text-primary/90" />
+                    <FormLabel className="flex items-center text-md font-medium">
+                      <BarChart3 className="mr-2 h-5 w-5 text-primary/90" />
                       Difficulty Level *
                     </FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="text-base h-12 px-4">
+                        <SelectTrigger className="text-sm h-11 px-3">
                           <SelectValue placeholder="Select difficulty" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {difficultyOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value} className="text-base py-2.5">
+                          <SelectItem key={option.value} value={option.value} className="text-sm py-2">
                             {option.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <FormMessage />
+                    <FormMessage className="text-xs" />
                   </FormItem>
                 )}
               />
             </div>
-            
-            <FormField
-              control={form.control}
-              name="timeLimitMinutes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center text-lg font-medium">
-                    <Timer className="mr-3 h-6 w-6 text-primary/90" />
-                    Time Limit (Optional)
-                  </FormLabel>
-                  <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={String(field.value)}>
-                    <FormControl>
-                      <SelectTrigger className="text-base h-12 px-4">
-                        <SelectValue placeholder="Select time limit" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {timeLimitOptions.map((option) => (
-                        <SelectItem key={option.value} value={String(option.value)} className="text-base py-2.5">
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
-            <FormField
-              control={form.control}
-              name="specificExam"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center text-lg font-medium">
-                    <FileText className="mr-3 h-6 w-6 text-primary/90" />
-                    Specific Exam (Optional)
-                  </FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="e.g., SAT Math, UPSC Prelims, AP Biology" 
-                      {...field} 
-                      className="text-base h-12 px-4" 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
+                <FormField
+                control={form.control}
+                name="timeLimitMinutes"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel className="flex items-center text-md font-medium">
+                        <Timer className="mr-2 h-5 w-5 text-primary/90" />
+                        Time Limit
+                      </FormLabel>
+                    <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={String(field.value || 0)}>
+                        <FormControl>
+                        <SelectTrigger className="text-sm h-11 px-3">
+                            <SelectValue placeholder="Select time limit" />
+                        </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                        {timeLimitOptions.map((option) => (
+                            <SelectItem key={option.value} value={String(option.value)} className="text-sm py-2">
+                            {option.label}
+                            </SelectItem>
+                        ))}
+                        </SelectContent>
+                    </Select>
+                    <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="specificExam"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel className="flex items-center text-md font-medium">
+                        <FileText className="mr-2 h-5 w-5 text-primary/90" />
+                        Specific Exam (Optional)
+                      </FormLabel>
+                    <FormControl>
+                        <Input
+                        placeholder="e.g., SAT Math, UPSC"
+                        {...field}
+                        className="text-sm h-11 px-3"
+                        />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+                />
+            </div>
+
 
             <FormField
               control={form.control}
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center text-lg font-medium">
-                    <Edit className="mr-3 h-6 w-6 text-primary/90" />
+                  <FormLabel className="flex items-center text-md font-medium">
+                    <Edit className="mr-2 h-5 w-5 text-primary/90" />
                      Notes / Instructions for AI (Optional)
                   </FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="e.g., Focus on definitions, One-word answers only, Include historical context"
-                      className="text-base min-h-[120px] p-4"
+                      placeholder="e.g., Focus on definitions, One-word answers only"
+                      className="text-sm min-h-[100px] p-3"
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-xs" />
                 </FormItem>
               )}
             />
-            
-            <Button type="submit" size="lg" className="w-full text-lg py-7 mt-10 !h-16" disabled={isLoading}>
+
+            <Button type="submit" size="lg" className="w-full text-md py-6 !h-14 mt-8" disabled={isLoading}>
               {isLoading ? (
-                <Loader2 className="mr-2.5 h-6 w-6 animate-spin" />
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               ) : (
-                <Sparkles className="mr-2.5 h-6 w-6" />
+                <Sparkles className="mr-2 h-5 w-5" />
               )}
               Generate MCQs
             </Button>

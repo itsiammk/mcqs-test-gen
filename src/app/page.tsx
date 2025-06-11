@@ -6,7 +6,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { MCQForm } from '@/components/mcq/MCQForm';
 import { QuizView } from '@/components/mcq/QuizView';
-import { LoadingModal } from '@/components/mcq/LoadingModal'; 
+import { LoadingModal } from '@/components/mcq/LoadingModal';
 import { generateMCQsAction } from '@/app/actions/generateMCQsAction';
 import type { MCQ, MCQFormInput, UserAnswer, MarkedReview, QuizState } from '@/types/mcq';
 import { useToast } from "@/hooks/use-toast";
@@ -78,10 +78,10 @@ export default function Home() {
     setError(null);
     setQuestions(null);
     setCurrentTestParams(data);
-    setQuizState('form'); 
+    setQuizState('form');
 
     const result = await generateMCQsAction(data);
-    
+
     setIsLoading(false);
     setShowLoadingModal(false);
 
@@ -155,7 +155,7 @@ export default function Home() {
 
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex(prev => prev - 1); // Corrected decrement
     }
   };
 
@@ -164,7 +164,7 @@ export default function Home() {
       setCurrentQuestionIndex(index);
     }
   };
-  
+
   const handleStartReview = () => {
     setQuizState('reviewing');
   };
@@ -215,7 +215,7 @@ export default function Home() {
       textContent += `Explanation: ${q.explanation}\n`;
       textContent += `----------------------------------------\n\n`;
     });
-    
+
     const scorePercentage = questions.length > 0 ? (correctAnswersCount / questions.length) * 100 : 0;
     textContent += `Final Score: ${correctAnswersCount} out of ${questions.length} (${scorePercentage.toFixed(2)}%)\n`;
     textContent += `=====================\n`;
@@ -237,19 +237,19 @@ export default function Home() {
 
   const featureCards = [
     {
-      icon: <BookOpen className="h-10 w-10 text-accent" />,
+      icon: <BookOpen className="h-8 w-8 text-accent" />,
       title: "Enter Subject",
       description: "Input your desired topic or subject area for the quiz.",
     },
     {
-      icon: <ListChecksIcon className="h-10 w-10 text-accent" />,
+      icon: <ListChecksIcon className="h-8 w-8 text-accent" />,
       title: "Set Parameters",
-      description: "Choose number of questions, difficulty, and time limit. Add optional notes.",
+      description: "Choose questions, difficulty, time, and other options.",
     },
     {
-      icon: <ZapIcon className="h-10 w-10 text-accent" />,
+      icon: <ZapIcon className="h-8 w-8 text-accent" />,
       title: "Get Your Quiz!",
-      description: "Our AI crafts a unique, tailored quiz just for you in seconds.",
+      description: "Our AI crafts a unique, tailored quiz for you instantly.",
     },
   ];
 
@@ -257,50 +257,49 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-12 sm:py-20">
+      <main className="flex-grow container mx-auto px-4 py-8 sm:py-12">
         <LoadingModal isOpen={showLoadingModal} />
         {quizState === 'form' && (
           <>
-            <section className="mb-16 md:mb-24 text-center">
-              <Brain className="mx-auto h-24 w-24 text-primary mb-8 animate-pulse" />
-              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-headline font-bold mb-8 text-foreground">
-                Welcome to ScholarQuiz!
-              </h2>
-              <p className="text-xl sm:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12">
-                Generate custom multiple-choice quizzes on any subject to supercharge your learning.
-                Just pick your topic, number of questions, and difficulty level to get started.
-              </p>
+            <section className="mb-10 md:mb-12">
+              <div className="text-left">
+                <h2 className="text-4xl sm:text-5xl font-headline font-semibold mb-3 text-foreground">
+                  Create Your Quiz
+                </h2>
+                <p className="text-lg text-muted-foreground max-w-2xl mb-10">
+                  Generate custom MCQs on any subject to boost your learning.
+                </p>
+              </div>
+              <div className="w-full">
+                  <MCQForm onSubmit={handleFormSubmit} isLoading={isLoading} />
+              </div>
             </section>
-            
-            <div className="mb-16 md:mb-24">
-                <MCQForm onSubmit={handleFormSubmit} isLoading={isLoading} />
-            </div>
 
-            <section className="text-center py-16 md:py-24 bg-muted/50 dark:bg-muted/30 rounded-xl mb-16 md:mb-20">
-                <h3 className="text-4xl font-headline font-semibold mb-16 text-foreground">How it Works</h3>
-                <div className="max-w-5xl mx-auto grid sm:grid-cols-1 md:grid-cols-3 gap-10 px-6">
+            {error && !isLoading && (
+              <Alert variant="destructive" className="my-10 max-w-2xl mx-auto p-5 shadow-md">
+                <Terminal className="h-5 w-5" />
+                <AlertTitle className="text-lg font-semibold">Generation Error</AlertTitle>
+                <AlertDescription className="text-md mt-1">{error}</AlertDescription>
+              </Alert>
+            )}
+            
+            <section className="text-center py-12 md:py-16 bg-muted/30 dark:bg-muted/20 rounded-xl mt-16 mb-12 md:mb-16">
+                <h3 className="text-3xl font-headline font-semibold mb-12 text-foreground">How it Works</h3>
+                <div className="max-w-5xl mx-auto grid sm:grid-cols-1 md:grid-cols-3 gap-8 px-6">
                     {featureCards.map((feature, index) => (
-                       <div key={index} className="flex flex-col items-center p-8 bg-card rounded-xl shadow-2xl transform hover:scale-105 transition-transform duration-300">
-                           <div className="p-5 rounded-full mb-6 bg-primary/10">
+                       <div key={index} className="flex flex-col items-center p-6 bg-card rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
+                           <div className="p-4 rounded-full mb-5 bg-primary/10">
                               {feature.icon}
                            </div>
-                           <h4 className="text-2xl font-semibold mb-3 text-foreground">{feature.title}</h4>
-                           <p className="text-lg text-muted-foreground text-center leading-relaxed">{feature.description}</p>
+                           <h4 className="text-xl font-semibold mb-2 text-foreground">{feature.title}</h4>
+                           <p className="text-md text-muted-foreground text-center leading-relaxed">{feature.description}</p>
                        </div>
                     ))}
                 </div>
             </section>
-
-            {error && !isLoading && (
-              <Alert variant="destructive" className="my-12 max-w-2xl mx-auto p-6 shadow-lg">
-                <Terminal className="h-6 w-6" />
-                <AlertTitle className="text-xl font-semibold">Generation Error</AlertTitle>
-                <AlertDescription className="text-lg mt-2">{error}</AlertDescription>
-              </Alert>
-            )}
           </>
         )}
-        
+
         {(quizState === 'taking' || quizState === 'submitted' || quizState === 'reviewing') && questions && currentTestParams && (
           <QuizView
             questions={questions}
@@ -324,11 +323,11 @@ export default function Home() {
           />
         )}
          {quizState !== 'form' && error && !isLoading && (
-           <Alert variant="destructive" className="my-10 p-6 shadow-lg">
+           <Alert variant="destructive" className="my-8 p-5 shadow-lg">
              <Terminal className="h-5 w-5" />
-             <AlertTitle className="text-xl font-semibold">Error</AlertTitle>
-             <AlertDescription className="text-lg mt-2">{error} Please try starting a new test.</AlertDescription>
-             <Button onClick={handleStartNewTest} variant="outline" size="lg" className="mt-8 h-12 text-lg">Start New Test</Button>
+             <AlertTitle className="text-lg font-semibold">Error</AlertTitle>
+             <AlertDescription className="text-md mt-1">{error} Please try starting a new test.</AlertDescription>
+             <Button onClick={handleStartNewTest} variant="outline" size="lg" className="mt-6 h-11 text-md">Start New Test</Button>
            </Alert>
          )}
       </main>
