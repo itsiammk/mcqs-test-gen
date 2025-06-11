@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -50,6 +51,8 @@ Ensure the questions are appropriate for the specified difficulty:
 - Moderate: Intermediate concepts, requiring some reasoning or application.
 - High: Advanced concepts, complex reasoning, or multi-step problem-solving.
 
+Crucially, ensure all questions are factually accurate, clearly worded, and unambiguous. Double-check that the provided correct answer and explanation are verifiably true for the given subject and difficulty.
+
 The output must be in valid JSON format, with the following structure:
 \`\`\`json
 [
@@ -59,8 +62,7 @@ The output must be in valid JSON format, with the following structure:
     "correctAnswer": 0,
     "explanation": "Brief explanation of the correct answer.",
     "difficulty": "{{difficulty}}"
-  },
-  ...
+  }
 ]
 \`\`\`
 Ensure the JSON is properly formatted, with no missing fields or syntax errors.
@@ -81,3 +83,4 @@ const generateMCQsFlow = ai.defineFlow(
   }
 );
 
+    

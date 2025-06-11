@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { MCQ, MCQFormInput, UserAnswer, MarkedReview, QuizState } from '@/types/mcq';
@@ -5,9 +6,9 @@ import { QuestionCard } from './QuestionCard';
 import { QuestionNavigationPanel } from './QuestionNavigationPanel';
 import { QuizControls } from './QuizControls';
 import { Button } from '@/components/ui/button';
-import { Download, ListRestart, Eye, Info, CheckCircle, Award } from 'lucide-react';
+import { Download, ListRestart, Eye, Info, Award } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'; // Added CardDescription
 
 interface QuizViewProps {
   questions: MCQ[];
@@ -65,32 +66,32 @@ export function QuizView({
     `Question ${currentQuestionIndex + 1} of ${questions.length}`;
 
   return (
-    <div className="mt-2 sm:mt-6">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h2 className="text-2xl sm:text-3xl font-headline font-semibold text-center sm:text-left">
+    <div className="mt-4 sm:mt-8">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-headline font-semibold text-center sm:text-left">
           {quizTitle}
         </h2>
-        <div className="flex flex-wrap gap-2 justify-center">
+        <div className="flex flex-wrap gap-3 justify-center">
           {quizState === 'submitted' && (
-            <Button onClick={onStartReview} variant="default" size="sm">
-              <Eye className="mr-2 h-4 w-4" /> Review Answers
+            <Button onClick={onStartReview} variant="default" size="lg">
+              <Eye className="mr-2 h-5 w-5" /> Review Answers
             </Button>
           )}
           {(quizState === 'reviewing' || quizState === 'submitted') && (
-             <Button onClick={onExportResults} variant="outline" size="sm">
-                <Download className="mr-2 h-4 w-4" /> Export Results
+             <Button onClick={onExportResults} variant="outline" size="lg">
+                <Download className="mr-2 h-5 w-5" /> Export Results
              </Button>
           )}
-          <Button onClick={onStartNewTest} variant="destructive" size="sm">
-            <ListRestart className="mr-2 h-4 w-4" /> Start New Test
+          <Button onClick={onStartNewTest} variant="destructive" size="lg">
+            <ListRestart className="mr-2 h-5 w-5" /> Start New Test
           </Button>
         </div>
       </div>
       
-      <Alert className="mb-6 bg-card border-border/60 text-foreground shadow-sm">
-        <Info className="h-5 w-5 text-primary" />
-        <AlertTitle className="font-headline text-primary">Test Details</AlertTitle>
-        <AlertDescription className="text-sm text-muted-foreground">
+      <Alert className="mb-8 p-5 bg-card border-border/60 text-foreground shadow-md">
+        <Info className="h-6 w-6 text-primary" />
+        <AlertTitle className="font-headline text-primary text-lg mb-1">Test Details</AlertTitle>
+        <AlertDescription className="text-md text-muted-foreground">
           Subject: <span className="font-semibold text-foreground">{testParams.subject}</span> | 
           Questions: <span className="font-semibold text-foreground">{questions.length}</span> | 
           Difficulty: <span className="font-semibold capitalize text-foreground">{testParams.difficulty}</span>
@@ -103,21 +104,24 @@ export function QuizView({
       </Alert>
 
       {quizState === 'submitted' && (
-         <Card className="text-center p-6 sm:p-8 shadow-xl my-8 bg-gradient-to-br from-card to-muted/30">
-           <CardHeader className="pb-2">
-            <Award className="mx-auto h-16 w-16 text-yellow-500 mb-4" />
-            <CardTitle className="text-2xl sm:text-3xl font-semibold mb-2">Test Completed!</CardTitle>
+         <Card className="text-center p-8 sm:p-12 shadow-xl my-10 bg-gradient-to-br from-card to-muted/30">
+           <CardHeader className="pb-4">
+            <Award className="mx-auto h-20 w-20 text-yellow-500 mb-6" />
+            <CardTitle className="text-3xl sm:text-4xl font-semibold mb-3">Test Completed!</CardTitle>
+            <CardDescription className="text-lg text-muted-foreground">
+              You've successfully finished the quiz.
+            </CardDescription>
            </CardHeader>
-           <CardContent>
-            <p className="text-muted-foreground text-lg mb-6">
-              Great job on finishing the test! Your score is <strong className="text-foreground">{score} out of {questions.length}</strong> ({scorePercentage.toFixed(1)}%).
+           <CardContent className="pt-2">
+            <p className="text-xl text-foreground mb-8">
+              Your score is <strong className="text-2xl">{score} out of {questions.length}</strong> ({scorePercentage.toFixed(1)}%).
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Button onClick={onStartReview} size="lg">
-                    <Eye className="mr-2 h-5 w-5" /> Review Answers
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button onClick={onStartReview} size="xl" className="h-14 text-lg">
+                    <Eye className="mr-2.5 h-6 w-6" /> Review Answers
                 </Button>
-                <Button onClick={onStartNewTest} variant="outline" size="lg">
-                    <ListRestart className="mr-2 h-5 w-5" /> Start Another Test
+                <Button onClick={onStartNewTest} variant="outline" size="xl" className="h-14 text-lg">
+                    <ListRestart className="mr-2.5 h-6 w-6" /> Start Another Test
                 </Button>
             </div>
            </CardContent>
@@ -125,8 +129,8 @@ export function QuizView({
       )}
 
       {(quizState === 'taking' || quizState === 'reviewing') && currentQuestion && (
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="lg:flex-grow order-2 lg:order-1 min-w-0"> {/* Added min-w-0 for flex child issues */}
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="lg:flex-grow order-2 lg:order-1 min-w-0">
             <QuestionCard
               key={`${currentQuestionIndex}-${quizState}`} 
               question={currentQuestion}
@@ -149,7 +153,7 @@ export function QuizView({
               canClearChoice={userAnswers[currentQuestionIndex] !== null && quizState === 'taking'}
             />
           </div>
-          <div className="lg:w-72 xl:w-80 order-1 lg:order-2 flex-shrink-0">
+          <div className="lg:w-80 xl:w-96 order-1 lg:order-2 flex-shrink-0">
             <QuestionNavigationPanel
               questions={questions}
               totalQuestions={questions.length}
@@ -165,3 +169,5 @@ export function QuizView({
     </div>
   );
 }
+
+    

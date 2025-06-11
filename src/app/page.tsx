@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -9,9 +10,10 @@ import { generateMCQsAction } from '@/app/actions/generateMCQsAction';
 import type { MCQ, MCQFormInput, UserAnswer, MarkedReview, QuizState } from '@/types/mcq';
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, Brain } from "lucide-react";
+import { Terminal, Brain, ArrowRight } from "lucide-react";
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link'; // Added for potential future use if needed for internal links
 
 export default function Home() {
   const [questions, setQuestions] = useState<MCQ[] | null>(null);
@@ -183,21 +185,21 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-8 sm:py-12">
+      <main className="flex-grow container mx-auto px-4 py-10 sm:py-16">
         {quizState === 'form' && (
           <>
-            <section className="mb-12 md:mb-16 text-center">
-              <Brain className="mx-auto h-16 w-16 text-primary mb-4 animate-pulse" />
-              <h2 className="text-4xl sm:text-5xl font-headline font-bold mb-4 text-foreground">
+            <section className="mb-16 md:mb-20 text-center">
+              <Brain className="mx-auto h-20 w-20 text-primary mb-6 animate-pulse" />
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-headline font-bold mb-6 text-foreground">
                 Welcome to ScholarQuiz!
               </h2>
-              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
                 Generate custom multiple-choice quizzes on any subject to supercharge your learning.
                 Just pick your topic, number of questions, and difficulty level to get started.
               </p>
             </section>
             
-            <div className="grid md:grid-cols-5 gap-8 lg:gap-12 items-center mb-12 md:mb-16">
+            <div className="grid md:grid-cols-5 gap-10 lg:gap-16 items-center mb-16 md:mb-20">
               <div className="md:col-span-3 order-2 md:order-1">
                 <MCQForm onSubmit={handleFormSubmit} isLoading={isLoading} />
               </div>
@@ -208,26 +210,44 @@ export default function Home() {
                   width={600} 
                   height={450}
                   className="rounded-xl shadow-2xl object-cover aspect-[4/3]"
-                  data-ai-hint="education study"
+                  data-ai-hint="education learning"
                   priority
                 />
               </div>
             </div>
 
-            <section className="text-center mb-12 md:mb-16">
-                <h3 className="text-2xl font-headline font-semibold mb-3 text-foreground">How it Works</h3>
-                <p className="text-muted-foreground max-w-xl mx-auto">
-                    1. Enter your desired subject. <br/>
-                    2. Select the number of questions and difficulty. <br/>
-                    3. Our AI will craft a unique quiz just for you!
-                </p>
+            <section className="text-center py-12 md:py-16 bg-muted/30 dark:bg-muted/20 rounded-xl mb-16 md:mb-20">
+                <h3 className="text-3xl font-headline font-semibold mb-6 text-foreground">How it Works</h3>
+                <div className="max-w-4xl mx-auto grid sm:grid-cols-3 gap-8 px-6">
+                    <div className="flex flex-col items-center p-6 bg-card rounded-lg shadow-lg">
+                        <div className="bg-primary/10 text-primary p-4 rounded-full mb-4">
+                           <span className="text-2xl font-bold">1</span>
+                        </div>
+                        <h4 className="text-xl font-semibold mb-2">Enter Subject</h4>
+                        <p className="text-muted-foreground text-center">Input your desired topic or subject area.</p>
+                    </div>
+                     <div className="flex flex-col items-center p-6 bg-card rounded-lg shadow-lg">
+                        <div className="bg-primary/10 text-primary p-4 rounded-full mb-4">
+                           <span className="text-2xl font-bold">2</span>
+                        </div>
+                        <h4 className="text-xl font-semibold mb-2">Set Parameters</h4>
+                        <p className="text-muted-foreground text-center">Choose number of questions & difficulty.</p>
+                    </div>
+                     <div className="flex flex-col items-center p-6 bg-card rounded-lg shadow-lg">
+                        <div className="bg-primary/10 text-primary p-4 rounded-full mb-4">
+                           <span className="text-2xl font-bold">3</span>
+                        </div>
+                        <h4 className="text-xl font-semibold mb-2">Get Quiz!</h4>
+                        <p className="text-muted-foreground text-center">Our AI crafts a unique quiz just for you.</p>
+                    </div>
+                </div>
             </section>
 
             {error && !isLoading && (
-              <Alert variant="destructive" className="my-8 max-w-2xl mx-auto">
-                <Terminal className="h-5 w-5" />
-                <AlertTitle>Generation Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
+              <Alert variant="destructive" className="my-10 max-w-2xl mx-auto p-6">
+                <Terminal className="h-6 w-6" />
+                <AlertTitle className="text-lg">Generation Error</AlertTitle>
+                <AlertDescription className="text-base">{error}</AlertDescription>
               </Alert>
             )}
           </>
@@ -254,11 +274,11 @@ export default function Home() {
           />
         )}
          {quizState !== 'form' && error && !isLoading && (
-           <Alert variant="destructive" className="my-8">
-             <Terminal className="h-4 w-4" />
-             <AlertTitle>Error</AlertTitle>
-             <AlertDescription>{error} Please try starting a new test.</AlertDescription>
-             <Button onClick={handleStartNewTest} variant="outline" className="mt-4">Start New Test</Button>
+           <Alert variant="destructive" className="my-10 p-6">
+             <Terminal className="h-5 w-5" />
+             <AlertTitle className="text-lg">Error</AlertTitle>
+             <AlertDescription className="text-base">{error} Please try starting a new test.</AlertDescription>
+             <Button onClick={handleStartNewTest} variant="outline" className="mt-6">Start New Test</Button>
            </Alert>
          )}
       </main>
@@ -266,3 +286,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

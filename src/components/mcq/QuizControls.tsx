@@ -1,7 +1,8 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, RotateCcw, Flag, Send, Trash2Icon } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RotateCcw, Flag, Send } from 'lucide-react'; // Removed Trash2Icon
 import type { QuizState } from '@/types/mcq';
 import { cn } from '@/lib/utils';
 
@@ -33,16 +34,17 @@ export function QuizControls({
   
   if (quizState === 'reviewing') {
     return (
-      <div className="mt-6 flex justify-between items-center p-4 bg-card rounded-lg shadow-md border border-border/60">
+      <div className="mt-8 flex justify-between items-center p-5 bg-card rounded-lg shadow-md border border-border/60">
         <Button 
             onClick={onPrevious} 
             disabled={currentQuestionIndex === 0} 
             variant="outline" 
             size="lg"
+            className="h-12 px-6 text-md"
         >
           <ChevronLeft className="mr-2 h-5 w-5" /> Previous
         </Button>
-        <span className="text-sm font-medium text-muted-foreground hidden sm:block">
+        <span className="text-md font-medium text-muted-foreground hidden sm:block">
           Reviewing: Question {currentQuestionIndex + 1} of {totalQuestions}
         </span>
         <Button 
@@ -50,6 +52,7 @@ export function QuizControls({
             disabled={currentQuestionIndex === totalQuestions - 1} 
             variant="outline" 
             size="lg"
+            className="h-12 px-6 text-md"
         >
           Next <ChevronRight className="ml-2 h-5 w-5" />
         </Button>
@@ -63,13 +66,13 @@ export function QuizControls({
 
   // Taking quiz controls
   return (
-    <div className="mt-6 p-4 bg-card rounded-lg shadow-md border border-border/60">
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4">
+    <div className="mt-8 p-5 bg-card rounded-lg shadow-md border border-border/60">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-5">
         <Button 
           onClick={onPrevious} 
           disabled={currentQuestionIndex === 0} 
           variant="outline"
-          className="w-full sm:w-auto"
+          className="w-full sm:w-auto h-12 px-6 text-md"
           size="lg"
         >
           <ChevronLeft className="mr-2 h-5 w-5" /> Previous
@@ -79,7 +82,7 @@ export function QuizControls({
           <Button 
             onClick={onNext} 
             variant="default"
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto h-12 px-6 text-md"
             size="lg"
           >
             Save & Next <ChevronRight className="ml-2 h-5 w-5" />
@@ -88,28 +91,31 @@ export function QuizControls({
           <Button 
             onClick={onSubmitTest} 
             variant="primary"
-            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white dark:bg-green-500 dark:hover:bg-green-600"
+            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white dark:bg-green-500 dark:hover:bg-green-600 h-12 px-6 text-md"
             size="lg"
           >
             <Send className="mr-2 h-5 w-5" /> Submit Test
           </Button>
         )}
       </div>
-      <div className="flex flex-wrap justify-start items-center gap-3 border-t border-border/50 pt-4">
+      <div className="flex flex-wrap justify-start items-center gap-4 border-t border-border/50 pt-5">
         <Button 
           onClick={onMarkForReview} 
           variant="outline"
+          size="lg"
           className={cn(
-            "text-sm",
+            "text-md h-11 px-5",
             isMarked && "bg-yellow-400/80 border-yellow-500 text-yellow-900 hover:bg-yellow-500/80 dark:bg-yellow-500/70 dark:border-yellow-600 dark:text-yellow-900 dark:hover:bg-yellow-600/70"
           )}
         >
-          <Flag className="mr-2 h-4 w-4" /> {isMarked ? 'Unmark Review' : 'Mark for Review'}
+          <Flag className="mr-2 h-5 w-5" /> {isMarked ? 'Unmark Review' : 'Mark for Review'}
         </Button>
-        <Button onClick={onClearChoice} variant="outline" className="text-sm" disabled={!canClearChoice}>
-          <RotateCcw className="mr-2 h-4 w-4" /> Clear Choice
+        <Button onClick={onClearChoice} variant="outline" size="lg" className="text-md h-11 px-5" disabled={!canClearChoice}>
+          <RotateCcw className="mr-2 h-5 w-5" /> Clear Choice
         </Button>
       </div>
     </div>
   );
 }
+
+    

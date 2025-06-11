@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -76,31 +77,31 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
   }
 
   return (
-    <Card className="w-full shadow-xl border-border/60">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-2xl font-headline flex items-center">
-          <Zap className="mr-2 h-7 w-7 text-primary" />
+    <Card className="w-full shadow-xl border-border/60 p-2 sm:p-4">
+      <CardHeader className="pb-6">
+        <CardTitle className="text-2xl sm:text-3xl font-headline flex items-center">
+          <Zap className="mr-3 h-8 w-8 text-primary" />
           Create Your Quiz
         </CardTitle>
-        <CardDescription>Fill in the details below to generate your personalized MCQs.</CardDescription>
+        <CardDescription className="text-base pt-1">Fill in the details below to generate your personalized MCQs.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8">
             <FormField
               control={form.control}
               name="subject"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center text-base font-medium">
-                    <BookText className="mr-2 h-5 w-5 text-primary/80" />
+                  <FormLabel className="flex items-center text-md font-medium">
+                    <BookText className="mr-2.5 h-5 w-5 text-primary/80" />
                     Subject
                   </FormLabel>
                   <FormControl>
                     <Input 
                       placeholder="e.g., Organic Chemistry, World War II, Calculus" 
                       {...field} 
-                      className="text-base py-5" 
+                      className="text-base h-12 px-4" 
                     />
                   </FormControl>
                   <FormMessage />
@@ -108,25 +109,25 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
               )}
             />
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
               <FormField
                 control={form.control}
                 name="numQuestions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center text-base font-medium">
-                      <ListChecks className="mr-2 h-5 w-5 text-primary/80" />
+                    <FormLabel className="flex items-center text-md font-medium">
+                      <ListChecks className="mr-2.5 h-5 w-5 text-primary/80" />
                       Number of Questions
                     </FormLabel>
                     <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={String(field.value)}>
                       <FormControl>
-                        <SelectTrigger className="text-base py-5">
+                        <SelectTrigger className="text-base h-12 px-4">
                           <SelectValue placeholder="Select number" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {numQuestionOptions.map((option) => (
-                          <SelectItem key={option.value} value={String(option.value)} className="text-base">
+                          <SelectItem key={option.value} value={String(option.value)} className="text-base py-2.5">
                             {option.label}
                           </SelectItem>
                         ))}
@@ -142,19 +143,19 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
                 name="difficulty"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center text-base font-medium">
-                      <BarChart3 className="mr-2 h-5 w-5 text-primary/80" />
+                    <FormLabel className="flex items-center text-md font-medium">
+                      <BarChart3 className="mr-2.5 h-5 w-5 text-primary/80" />
                       Difficulty Level
                     </FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="text-base py-5">
+                        <SelectTrigger className="text-base h-12 px-4">
                           <SelectValue placeholder="Select difficulty" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         {difficultyOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value} className="text-base">
+                          <SelectItem key={option.value} value={option.value} className="text-base py-2.5">
                             {option.label}
                           </SelectItem>
                         ))}
@@ -166,11 +167,11 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
               />
             </div>
             
-            <Button type="submit" size="lg" className="w-full text-lg py-7 mt-8" disabled={isLoading}>
+            <Button type="submit" size="lg" className="w-full text-lg py-7 mt-10 !h-14" disabled={isLoading}>
               {isLoading ? (
-                <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                <Loader2 className="mr-2.5 h-6 w-6 animate-spin" />
               ) : (
-                <Sparkles className="mr-2 h-6 w-6" />
+                <Sparkles className="mr-2.5 h-6 w-6" />
               )}
               Generate MCQs
             </Button>
@@ -180,3 +181,5 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
     </Card>
   );
 }
+
+    
