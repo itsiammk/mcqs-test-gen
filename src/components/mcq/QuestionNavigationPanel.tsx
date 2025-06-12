@@ -72,7 +72,7 @@ export function QuestionNavigationPanel({
       } else { // Unanswered
         statusStyle = "border-border hover:bg-muted/50 dark:hover:bg-muted/40";
         srText += ", Unanswered";
-        icon = <FileQuestion className="h-3.5 w-3.5 opacity-60"/>
+        icon = <FileQuestion className="h-3.5 w-3.5 opacity-60"/>;
       }
     }
     return { statusStyle, icon, srText };
@@ -111,14 +111,13 @@ export function QuestionNavigationPanel({
                   onClick={() => onNavigateToQuestion(index)}
                   aria-label={srText}
                 >
-                  {icon && <span className="absolute inset-0 flex items-center justify-center">{icon}</span>}
-                   <span className={cn((icon && index !== currentQuestionIndex && quizState === 'taking') ? 'opacity-0' : '', (quizState === 'reviewing' || (quizState === 'taking' && index === currentQuestionIndex) ) && icon ? 'opacity-0' : '') }>{index + 1}</span>
-                   {/* Show number if icon is present but it's not current question in taking mode, or always if no icon */}
-                   <span className={cn('opacity-100', icon && ( (quizState === 'taking' && index === currentQuestionIndex ) || quizState === 'reviewing') ? 'opacity-0' : 'opacity-100')}>{index + 1}</span>
-
-                  {/* Secondary icon for marked when not current in taking mode */}
-                  {quizState === 'taking' && markedForReview[index] && index !== currentQuestionIndex && !userAnswers[index] && (
-                     <Eye className="absolute top-0.5 right-0.5 h-3 w-3 text-yellow-600 dark:text-yellow-400 bg-card p-0.5 rounded-full shadow-sm" />
+                  {/* Always render the number */}
+                  <span>{index + 1}</span>
+                  {/* If an icon exists, render it overlaid */}
+                  {icon && (
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      {icon}
+                    </span>
                   )}
                 </Button>
               );
@@ -142,3 +141,4 @@ export function QuestionNavigationPanel({
     </Card>
   );
 }
+
