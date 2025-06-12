@@ -100,66 +100,40 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
   }
 
   return (
-    <Card className="w-full shadow-lg border-border/50 p-3 sm:p-5">
-      <CardHeader className="pb-4 text-center sm:text-left">
-        <div className="flex items-center justify-center sm:justify-start mb-3">
-            <Zap className="h-8 w-8 text-primary mr-3" />
-            <CardTitle className="text-2xl sm:text-3xl font-headline">
+    <Card className="w-full shadow-lg border-border/50 p-4 sm:p-6">
+      <CardHeader className="pb-3 pt-2 text-center sm:text-left">
+        <div className="flex items-center justify-center sm:justify-start mb-2">
+            <Zap className="h-7 w-7 text-primary mr-2.5" />
+            <CardTitle className="text-xl sm:text-2xl font-headline">
             Quiz Parameters
             </CardTitle>
         </div>
-        <CardDescription className="text-md text-muted-foreground">
-          Fill in the details to generate personalized MCQs.
+        <CardDescription className="text-sm text-muted-foreground">
+          Fill in the details to generate MCQs.
         </CardDescription>
       </CardHeader>
-      <CardContent className="pt-2">
+      <CardContent className="pt-3">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="subject"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center text-md font-medium">
-                    <BookText className="mr-2 h-5 w-5 text-primary/90" />
-                    Subject *
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="e.g., Organic Chemistry, World War II"
-                      {...field}
-                      className="text-sm h-11 px-3"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-5">
+            
+            {/* Row 1 */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-5">
               <FormField
                 control={form.control}
-                name="numQuestions"
+                name="subject"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center text-md font-medium">
-                      <ListChecks className="mr-2 h-5 w-5 text-primary/90" />
-                      Number of Questions *
+                  <FormItem className="sm:col-span-2">
+                    <FormLabel className="flex items-center text-sm font-medium">
+                      <BookText className="mr-2 h-4 w-4 text-primary/90" />
+                      Subject *
                     </FormLabel>
-                    <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={String(field.value)}>
-                      <FormControl>
-                        <SelectTrigger className="text-sm h-11 px-3">
-                          <SelectValue placeholder="Select number" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {numQuestionOptions.map((option) => (
-                          <SelectItem key={option.value} value={String(option.value)} className="text-sm py-2">
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g., Organic Chemistry"
+                        {...field}
+                        className="text-xs h-10 px-3"
+                      />
+                    </FormControl>
                     <FormMessage className="text-xs" />
                   </FormItem>
                 )}
@@ -167,22 +141,22 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
 
               <FormField
                 control={form.control}
-                name="difficulty"
+                name="numQuestions"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center text-md font-medium">
-                      <BarChart3 className="mr-2 h-5 w-5 text-primary/90" />
-                      Difficulty Level *
+                    <FormLabel className="flex items-center text-sm font-medium">
+                      <ListChecks className="mr-2 h-4 w-4 text-primary/90" />
+                      Questions *
                     </FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={String(field.value)}>
                       <FormControl>
-                        <SelectTrigger className="text-sm h-11 px-3">
-                          <SelectValue placeholder="Select difficulty" />
+                        <SelectTrigger className="text-xs h-10 px-3">
+                          <SelectValue placeholder="Select num" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {difficultyOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value} className="text-sm py-2">
+                        {numQuestionOptions.map((option) => (
+                          <SelectItem key={option.value} value={String(option.value)} className="text-xs py-1.5">
                             {option.label}
                           </SelectItem>
                         ))}
@@ -193,26 +167,54 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
                 )}
               />
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
-                <FormField
+            
+            {/* Row 2 */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-4 gap-y-5">
+              <FormField
+                control={form.control}
+                name="difficulty"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center text-sm font-medium">
+                      <BarChart3 className="mr-2 h-4 w-4 text-primary/90" />
+                      Difficulty *
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="text-xs h-10 px-3">
+                          <SelectValue placeholder="Select level" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {difficultyOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value} className="text-xs py-1.5">
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
                 control={form.control}
                 name="timeLimitMinutes"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel className="flex items-center text-md font-medium">
-                        <Timer className="mr-2 h-5 w-5 text-primary/90" />
+                    <FormLabel className="flex items-center text-sm font-medium">
+                        <Timer className="mr-2 h-4 w-4 text-primary/90" />
                         Time Limit
                       </FormLabel>
                     <Select onValueChange={(value) => field.onChange(Number(value))} defaultValue={String(field.value || 0)}>
                         <FormControl>
-                        <SelectTrigger className="text-sm h-11 px-3">
-                            <SelectValue placeholder="Select time limit" />
+                        <SelectTrigger className="text-xs h-10 px-3">
+                            <SelectValue placeholder="Select time" />
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                         {timeLimitOptions.map((option) => (
-                            <SelectItem key={option.value} value={String(option.value)} className="text-sm py-2">
+                            <SelectItem key={option.value} value={String(option.value)} className="text-xs py-1.5">
                             {option.label}
                             </SelectItem>
                         ))}
@@ -227,15 +229,15 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
                 name="specificExam"
                 render={({ field }) => (
                     <FormItem>
-                    <FormLabel className="flex items-center text-md font-medium">
-                        <FileText className="mr-2 h-5 w-5 text-primary/90" />
-                        Specific Exam (Optional)
+                    <FormLabel className="flex items-center text-sm font-medium">
+                        <FileText className="mr-2 h-4 w-4 text-primary/90" />
+                        Specific Exam
                       </FormLabel>
                     <FormControl>
                         <Input
-                        placeholder="e.g., SAT Math, UPSC"
+                        placeholder="e.g., SAT Math"
                         {...field}
-                        className="text-sm h-11 px-3"
+                        className="text-xs h-10 px-3"
                         />
                     </FormControl>
                     <FormMessage className="text-xs" />
@@ -244,20 +246,21 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
                 />
             </div>
 
-
+            {/* Row 3 */}
             <FormField
               control={form.control}
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex items-center text-md font-medium">
-                    <Edit className="mr-2 h-5 w-5 text-primary/90" />
-                     Notes / Instructions for AI (Optional)
+                  <FormLabel className="flex items-center text-sm font-medium">
+                    <Edit className="mr-2 h-4 w-4 text-primary/90" />
+                     Notes / Instructions (Optional)
                   </FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="e.g., Focus on definitions, One-word answers only"
-                      className="text-sm min-h-[100px] p-3"
+                      className="text-xs min-h-[80px] p-2.5"
+                      rows={3}
                       {...field}
                     />
                   </FormControl>
@@ -266,11 +269,11 @@ export function MCQForm({ onSubmit, isLoading }: MCQFormProps) {
               )}
             />
 
-            <Button type="submit" size="lg" className="w-full text-md py-6 !h-14 mt-8" disabled={isLoading}>
+            <Button type="submit" size="lg" className="w-full text-sm py-2.5 !h-11 mt-5" disabled={isLoading}>
               {isLoading ? (
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                <Sparkles className="mr-2 h-5 w-5" />
+                <Sparkles className="mr-2 h-4 w-4" />
               )}
               Generate MCQs
             </Button>

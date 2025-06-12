@@ -11,7 +11,7 @@ import { generateMCQsAction } from '@/app/actions/generateMCQsAction';
 import type { MCQ, MCQFormInput, UserAnswer, MarkedReview, QuizState } from '@/types/mcq';
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, Brain, BookOpen, ListChecksIcon, ZapIcon } from "lucide-react";
+import { Terminal, Brain, BookOpen, ListChecksIcon, ZapIcon, BookOpenCheck } from "lucide-react";
 import { Button } from '@/components/ui/button';
 
 export default function Home() {
@@ -78,7 +78,7 @@ export default function Home() {
     setError(null);
     setQuestions(null);
     setCurrentTestParams(data);
-    setQuizState('form');
+    // setQuizState('form'); // Keep in form state until success
 
     const result = await generateMCQsAction(data);
 
@@ -155,7 +155,7 @@ export default function Home() {
 
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1); // Corrected decrement
+      setCurrentQuestionIndex(prev => prev - 1);
     }
   };
 
@@ -237,19 +237,19 @@ export default function Home() {
 
   const featureCards = [
     {
-      icon: <BookOpen className="h-8 w-8 text-accent" />,
+      icon: <BookOpen className="h-6 w-6 text-accent" />,
       title: "Enter Subject",
-      description: "Input your desired topic or subject area for the quiz.",
+      description: "Input topic for quiz.",
     },
     {
-      icon: <ListChecksIcon className="h-8 w-8 text-accent" />,
+      icon: <ListChecksIcon className="h-6 w-6 text-accent" />,
       title: "Set Parameters",
-      description: "Choose questions, difficulty, time, and other options.",
+      description: "Choose questions, difficulty, etc.",
     },
     {
-      icon: <ZapIcon className="h-8 w-8 text-accent" />,
+      icon: <ZapIcon className="h-6 w-6 text-accent" />,
       title: "Get Your Quiz!",
-      description: "Our AI crafts a unique, tailored quiz for you instantly.",
+      description: "AI crafts a unique quiz instantly.",
     },
   ];
 
@@ -257,47 +257,54 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-8 sm:py-12">
+      <main className="flex-grow container mx-auto px-4 py-6 sm:py-10">
         <LoadingModal isOpen={showLoadingModal} />
         {quizState === 'form' && (
-          <>
-            <section className="mb-10 md:mb-12">
-              <div className="text-left">
-                <h2 className="text-4xl sm:text-5xl font-headline font-semibold mb-3 text-foreground">
-                  Create Your Quiz
-                </h2>
-                <p className="text-lg text-muted-foreground max-w-2xl mb-10">
+          <div className="grid md:grid-cols-10 gap-x-8 lg:gap-x-12 items-start">
+            {/* Left Column (30%) */}
+            <div className="md:col-span-3 space-y-6 md:sticky md:top-[calc(var(--header-height,80px)_+_2rem)]">
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <BookOpenCheck className="h-9 w-9 text-primary" />
+                  <h1 className="text-2xl font-headline font-semibold text-primary">
+                    ScholarQuiz
+                  </h1>
+                </div>
+                <p className="text-md text-muted-foreground">
                   Generate custom MCQs on any subject to boost your learning.
                 </p>
               </div>
-              <div className="w-full">
-                  <MCQForm onSubmit={handleFormSubmit} isLoading={isLoading} />
-              </div>
-            </section>
+              
+              <section className="text-left py-6 bg-muted/30 dark:bg-muted/20 rounded-xl p-5">
+                  <h3 className="text-xl font-headline font-semibold mb-4 text-foreground">How it Works</h3>
+                  <div className="space-y-4">
+                      {featureCards.map((feature, index) => (
+                         <div key={index} className="flex items-start p-3 bg-card/50 rounded-lg shadow-sm">
+                             <div className="p-2 rounded-full mr-3 bg-primary/10 shrink-0">
+                                {feature.icon}
+                             </div>
+                             <div>
+                               <h4 className="text-md font-semibold mb-0.5 text-foreground">{feature.title}</h4>
+                               <p className="text-xs text-muted-foreground leading-snug">{feature.description}</p>
+                             </div>
+                         </div>
+                      ))}
+                  </div>
+              </section>
+            </div>
 
-            {error && !isLoading && (
-              <Alert variant="destructive" className="my-10 max-w-2xl mx-auto p-5 shadow-md">
-                <Terminal className="h-5 w-5" />
-                <AlertTitle className="text-lg font-semibold">Generation Error</AlertTitle>
-                <AlertDescription className="text-md mt-1">{error}</AlertDescription>
-              </Alert>
-            )}
-            
-            <section className="text-center py-12 md:py-16 bg-muted/30 dark:bg-muted/20 rounded-xl mt-16 mb-12 md:mb-16">
-                <h3 className="text-3xl font-headline font-semibold mb-12 text-foreground">How it Works</h3>
-                <div className="max-w-5xl mx-auto grid sm:grid-cols-1 md:grid-cols-3 gap-8 px-6">
-                    {featureCards.map((feature, index) => (
-                       <div key={index} className="flex flex-col items-center p-6 bg-card rounded-lg shadow-lg transform hover:scale-105 transition-transform duration-300">
-                           <div className="p-4 rounded-full mb-5 bg-primary/10">
-                              {feature.icon}
-                           </div>
-                           <h4 className="text-xl font-semibold mb-2 text-foreground">{feature.title}</h4>
-                           <p className="text-md text-muted-foreground text-center leading-relaxed">{feature.description}</p>
-                       </div>
-                    ))}
-                </div>
-            </section>
-          </>
+            {/* Right Column (70%) */}
+            <div className="md:col-span-7">
+                <MCQForm onSubmit={handleFormSubmit} isLoading={isLoading} />
+                 {error && !isLoading && (
+                  <Alert variant="destructive" className="mt-6 p-4 shadow-md">
+                    <Terminal className="h-4 w-4" />
+                    <AlertTitle className="text-md font-semibold">Generation Error</AlertTitle>
+                    <AlertDescription className="text-sm mt-1">{error}</AlertDescription>
+                  </Alert>
+                )}
+            </div>
+          </div>
         )}
 
         {(quizState === 'taking' || quizState === 'submitted' || quizState === 'reviewing') && questions && currentTestParams && (
