@@ -279,7 +279,7 @@ export default function Home() {
                   <h3 className="text-xl font-headline font-semibold mb-4 text-foreground">How it Works</h3>
                   <div className="space-y-4">
                       {featureCards.map((feature, index) => (
-                         <div key={index} className="flex items-start p-3 bg-card/50 rounded-lg shadow-sm">
+                         <div key={index} className="flex items-start p-3 bg-card/50 rounded-lg shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200 ease-in-out">
                              <div className="p-2 rounded-full mr-3 bg-primary/10 shrink-0">
                                 {feature.icon}
                              </div>

@@ -41,12 +41,12 @@ const generateMCQsPrompt = ai.definePrompt({
   input: {schema: GenerateMCQsInputSchema},
   output: {schema: GenerateMCQsOutputSchema},
   prompt: `You are an expert in creating high-quality multiple-choice questions (MCQs) for educational purposes.
-Your primary goal is to generate factually accurate, clear, unambiguous, and valid questions.
+Your HIGHEST PRIORITY is factual accuracy. All question stems, options, correct answers, and explanations MUST be verifiably correct and free of errors.
 Generate exactly {{numQuestions}} MCQs for the subject "{{subject}}" with "{{difficulty}}" difficulty in the specified JSON format.
 
 {{#if specificExam}}
 IMPORTANT: The user has specified that these questions are for the "{{specificExam}}" exam.
-Tailor the questions accordingly. If you have knowledge of common question styles, topics, patterns, or frequently asked concepts for the "{{specificExam}}", please incorporate those.
+Tailor the questions accordingly. Try to consider common question styles, topics, patterns, or frequently asked concepts for the "{{specificExam}}".
 If specific knowledge of past papers for "{{specificExam}}" is not available to you, focus on generating high-quality questions that are typical for this exam's general scope, subject matter, and style.
 Do NOT invent or hallucinate past paper questions if you don't know them.
 Prioritize relevance to this specific exam context based on general knowledge of such exams.
@@ -57,10 +57,10 @@ The user has provided the following notes/instructions, please adhere to them ca
 {{/if}}
 
 Each question must have:
-- A clear and concise question text relevant to the subject. The question itself must be valid and make logical sense.
-- Exactly 4 answer options, labeled as strings.
-- A correct answer indicated by the index of the correct option (0, 1, 2, or 3).
-- A brief explanation (1–2 sentences) explaining why the correct answer is correct and, if relevant, why others are incorrect. This explanation must be accurate.
+- A clear and concise question text relevant to the subject. The question itself must be valid, make logical sense, and be unambiguous with only ONE clearly correct answer among the options.
+- Exactly 4 answer options, labeled as strings. Options should be plausible distractors but not so similar as to be confusing or rely on trivial distinctions.
+- A correct answer indicated by the index of the correct option (0, 1, 2, or 3). This correct answer MUST be verifiably true.
+- A brief explanation (1–2 sentences) meticulously justifying why the correct answer is correct and, if relevant, clearly stating why others are incorrect, based on factual information. This explanation must be accurate.
 
 Ensure the questions are appropriate for the specified difficulty:
 - Low: Basic concepts, foundational knowledge, simple application.
@@ -70,6 +70,7 @@ Ensure the questions are appropriate for the specified difficulty:
 CRITICAL: Double-check and triple-check all generated content for factual accuracy.
 Ensure the question is well-posed, the options are plausible yet distinct, the provided correct answer is verifiably true, and the explanation correctly supports the answer.
 Avoid overly ambiguous or subjective questions; focus on clear, objective content suitable for a test environment.
+If you are unsure about the factual accuracy of a question or answer you can generate, it is better to NOT generate that specific question and try a different one that meets all quality criteria.
 If the subject is broad (e.g., Reasoning), cover a variety of relevant topics within it (e.g., logical reasoning, analytical reasoning, verbal reasoning).
 
 The output must be in valid JSON format, with the following structure. Do not include any text outside this JSON structure.

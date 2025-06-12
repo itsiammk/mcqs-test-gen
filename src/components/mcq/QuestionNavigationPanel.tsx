@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import type { UserAnswer, MarkedReview, QuizState, MCQ } from '@/types/mcq';
-import { Eye, CheckCircle, XCircle, Circle, HelpCircle, Edit3 } from 'lucide-react';
+import { Eye, CheckCircle, XCircle, Circle, HelpCircle, Edit3, FileQuestion, CheckSquare, AlertTriangle } from 'lucide-react';
 
 interface QuestionNavigationPanelProps {
   questions: MCQ[];
@@ -39,19 +39,17 @@ export function QuestionNavigationPanel({
     let srText = `Question ${index + 1}`;
 
     if (quizState === 'reviewing') {
-      if (isAnswered) {
-        if (userAnswer === question.correctAnswer) {
-          statusStyle = "bg-green-100 border-green-500 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-800/40";
-          icon = <CheckCircle className="h-3.5 w-3.5" />;
-          srText += ", Correct";
-        } else {
-          statusStyle = "bg-red-100 border-red-500 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-800/40";
-          icon = <XCircle className="h-3.5 w-3.5" />;
-          srText += ", Incorrect";
-        }
-      } else {
-         statusStyle = "bg-gray-100 border-gray-400 text-gray-600 hover:bg-gray-200 dark:bg-gray-700/30 dark:border-gray-500 dark:text-gray-400 dark:hover:bg-gray-600/40";
-         icon = <HelpCircle className="h-3.5 w-3.5 opacity-70" />;
+      if (userAnswer === question.correctAnswer) { // Correct
+        statusStyle = "bg-green-100 border-green-500 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-800/40";
+        icon = <CheckCircle className="h-3.5 w-3.5" />;
+        srText += ", Correct";
+      } else if (isAnswered && userAnswer !== question.correctAnswer) { // Incorrect
+        statusStyle = "bg-red-100 border-red-500 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-800/40";
+        icon = <XCircle className="h-3.5 w-3.5" />;
+        srText += ", Incorrect";
+      } else { // Not Answered in review
+         statusStyle = "bg-amber-100 border-amber-500 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-800/40";
+         icon = <AlertTriangle className="h-3.5 w-3.5 opacity-80" />;
          srText += ", Not Answered";
       }
       if (isCurrent) {
@@ -62,15 +60,19 @@ export function QuestionNavigationPanel({
       if (isCurrent) {
         statusStyle = "bg-primary text-primary-foreground hover:bg-primary/90 ring-2 ring-primary/50 ring-offset-1 dark:ring-offset-background shadow-md";
         srText += ", Currently Viewing";
+        icon = <Edit3 className="h-3.5 w-3.5"/>;
       } else if (isMarked) {
         statusStyle = "bg-yellow-400/30 border-yellow-500 text-yellow-700 hover:bg-yellow-400/50 dark:bg-yellow-500/20 dark:border-yellow-600 dark:text-yellow-400 dark:hover:bg-yellow-500/30";
         srText += ", Marked for Review";
+        icon = <Eye className="h-3.5 w-3.5" />;
       } else if (isAnswered) {
-        statusStyle = "bg-muted border-muted-foreground/30 text-muted-foreground hover:bg-muted/80 dark:bg-muted/50";
+        statusStyle = "bg-green-100 border-green-500 text-green-700 hover:bg-green-200/70 dark:bg-green-900/30 dark:border-green-700 dark:text-green-400 dark:hover:bg-green-800/40";
         srText += ", Answered";
-      } else {
-        statusStyle = "border-border hover:bg-accent/10 dark:hover:bg-accent/20";
+        icon = <CheckSquare className="h-3.5 w-3.5" />;
+      } else { // Unanswered
+        statusStyle = "border-border hover:bg-muted/50 dark:hover:bg-muted/40";
         srText += ", Unanswered";
+        icon = <FileQuestion className="h-3.5 w-3.5 opacity-60"/>
       }
     }
     return { statusStyle, icon, srText };
@@ -79,13 +81,13 @@ export function QuestionNavigationPanel({
   const legendItems = quizState === 'reviewing' ? [
     { label: "Correct", icon: <CheckCircle className="h-3.5 w-3.5 text-green-500" />, style: "bg-green-100/80 dark:bg-green-900/50 border-green-500" },
     { label: "Incorrect", icon: <XCircle className="h-3.5 w-3.5 text-red-500" />, style: "bg-red-100/80 dark:bg-red-900/50 border-red-500" },
-    { label: "Not Answered", icon: <HelpCircle className="h-3.5 w-3.5 text-gray-500" />, style: "bg-gray-100/80 dark:bg-gray-700/50 border-gray-400" },
+    { label: "Not Answered", icon: <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />, style: "bg-amber-100/80 dark:bg-amber-900/50 border-amber-500" },
     { label: "Current", icon: <Edit3 className="h-3.5 w-3.5 text-primary" />, style: "ring-1 ring-primary" },
   ] : [
-    { label: "Current", style: "bg-primary text-primary-foreground" },
-    { label: "Answered", style: "bg-muted text-muted-foreground" },
-    { label: "Marked", icon: <Eye className="h-3 w-3 text-yellow-700 dark:text-yellow-300" />, style: "bg-yellow-400/30 border-yellow-500" },
-    { label: "Unanswered", style: "border-border" },
+    { label: "Current", icon: <Edit3 className="h-3.5 w-3.5 text-primary-foreground"/>, style: "bg-primary text-primary-foreground" },
+    { label: "Answered", icon: <CheckSquare className="h-3.5 w-3.5 text-green-700 dark:text-green-400"/>, style: "bg-green-100 dark:bg-green-900/30 border-green-500" },
+    { label: "Marked", icon: <Eye className="h-3.5 w-3.5 text-yellow-700 dark:text-yellow-400" />, style: "bg-yellow-400/30 border-yellow-500" },
+    { label: "Unanswered", icon: <FileQuestion className="h-3.5 w-3.5 text-muted-foreground opacity-70"/>, style: "border-border" },
   ];
 
   return (
@@ -110,9 +112,13 @@ export function QuestionNavigationPanel({
                   aria-label={srText}
                 >
                   {icon && <span className="absolute inset-0 flex items-center justify-center">{icon}</span>}
-                  <span className={cn(icon ? 'opacity-0' : '')}>{index + 1}</span>
-                  {quizState === 'taking' && markedForReview[index] && index !== currentQuestionIndex && (
-                     <Eye className="absolute top-0.5 right-0.5 h-3.5 w-3.5 text-yellow-600 dark:text-yellow-400 bg-card p-0.5 rounded-full shadow-sm" />
+                   <span className={cn((icon && index !== currentQuestionIndex && quizState === 'taking') ? 'opacity-0' : '', (quizState === 'reviewing' || (quizState === 'taking' && isCurrent) ) && icon ? 'opacity-0' : '') }>{index + 1}</span>
+                   {/* Show number if icon is present but it's not current question in taking mode, or always if no icon */}
+                   <span className={cn('opacity-100', icon && ( (quizState === 'taking' && index === currentQuestionIndex ) || quizState === 'reviewing') ? 'opacity-0' : 'opacity-100')}>{index + 1}</span>
+
+                  {/* Secondary icon for marked when not current in taking mode */}
+                  {quizState === 'taking' && markedForReview[index] && index !== currentQuestionIndex && !userAnswers[index] && (
+                     <Eye className="absolute top-0.5 right-0.5 h-3 w-3 text-yellow-600 dark:text-yellow-400 bg-card p-0.5 rounded-full shadow-sm" />
                   )}
                 </Button>
               );
@@ -124,7 +130,7 @@ export function QuestionNavigationPanel({
           <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
             {legendItems.map(item => (
               <div key={item.label} className="flex items-center gap-1.5">
-                <span className={cn("h-4 w-4 rounded inline-flex items-center justify-center shrink-0 border text-xs", item.style, quizState === 'reviewing' ? 'p-0.5' : '')}>
+                <span className={cn("h-4 w-4 rounded inline-flex items-center justify-center shrink-0 border text-xs", item.style, 'p-0.5')}>
                   {item.icon && item.icon}
                 </span>
                 <span className="text-muted-foreground">{item.label}</span>

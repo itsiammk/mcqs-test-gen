@@ -103,7 +103,7 @@ export function QuizView({
       {/* Sticky Test Details and Timer Bar */}
        <div className={cn(
           "sticky top-[calc(var(--header-height,80px)_-_1px)] z-30 bg-background/80 backdrop-blur-md mb-6 shadow-sm",
-          "lg:top-[calc(var(--header-height,80px)_-_1px)]" // Adjust based on actual header height
+          "lg:top-[calc(var(--header-height,80px)_-_1px)]" 
         )}>
         <Alert className="p-4 border-x-0 border-t-0 rounded-none sm:rounded-lg sm:border">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4">
@@ -128,7 +128,7 @@ export function QuizView({
                         <div className="text-xs text-muted-foreground mb-0.5">Time Remaining</div>
                         <div className={cn(
                             "font-mono text-2xl font-bold",
-                            timeLeft !== null && timeLeft <= 60 && timeLeft > 0 ? "text-destructive animate-pulse" : "text-primary"
+                            timeLeft !== null && timeLeft <= 60 && timeLeft > 0 && quizState === 'taking' ? "text-destructive animate-pulse" : "text-primary"
                             )}>
                             {formatTime(timeLeft)}
                         </div>
@@ -173,7 +173,7 @@ export function QuizView({
               </div>
             }
             <QuestionCard
-              key={`${currentQuestionIndex}-${quizState}-${currentQuestion.questionText.slice(0,10)}`}
+              key={`${currentQuestionIndex}-${quizState}-${userAnswers[currentQuestionIndex]}-${currentQuestion.questionText.slice(0,10)}`}
               question={currentQuestion}
               questionNumber={currentQuestionIndex + 1}
               selectedAnswerProp={userAnswers[currentQuestionIndex]}
