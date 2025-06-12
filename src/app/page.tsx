@@ -78,7 +78,6 @@ export default function Home() {
     setError(null);
     setQuestions(null);
     setCurrentTestParams(data);
-    // setQuizState('form'); // Keep in form state until success
 
     const result = await generateMCQsAction(data);
 
@@ -155,7 +154,7 @@ export default function Home() {
 
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+      setCurrentQuestionIndex(prev => prev + 1);
     }
   };
 
@@ -261,8 +260,8 @@ export default function Home() {
         <LoadingModal isOpen={showLoadingModal} />
         {quizState === 'form' && (
           <div className="grid md:grid-cols-10 gap-x-8 lg:gap-x-12 items-start">
-            {/* Left Column (30%) */}
-            <div className="md:col-span-3 space-y-6 md:sticky md:top-[calc(var(--header-height,80px)_+_2rem)]">
+            {/* Left Column (30%) - Order 2 on mobile, Order 1 on md+ */}
+            <div className="order-2 md:order-1 md:col-span-3 space-y-6 md:sticky md:top-[calc(var(--header-height,80px)_+_2rem)]">
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-2">
                   <BookOpenCheck className="h-9 w-9 text-primary" />
@@ -293,8 +292,8 @@ export default function Home() {
               </section>
             </div>
 
-            {/* Right Column (70%) */}
-            <div className="md:col-span-7">
+            {/* Right Column (70%) - Order 1 on mobile, Order 2 on md+ */}
+            <div className="order-1 md:order-2 md:col-span-7">
                 <MCQForm onSubmit={handleFormSubmit} isLoading={isLoading} />
                  {error && !isLoading && (
                   <Alert variant="destructive" className="mt-6 p-4 shadow-md">

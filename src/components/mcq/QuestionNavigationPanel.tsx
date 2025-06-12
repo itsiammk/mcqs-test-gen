@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import type { UserAnswer, MarkedReview, QuizState, MCQ } from '@/types/mcq';
-import { Eye, CheckSquare, XCircle, Circle, HelpCircle, Edit3, FileQuestion, CheckCircle, AlertTriangle } from 'lucide-react'; // Added CheckCircle
+import { Eye, CheckSquare, XCircle, Edit3, CheckCircle, AlertTriangle, FileQuestion } from 'lucide-react';
 
 interface QuestionNavigationPanelProps {
   questions: MCQ[];
@@ -35,24 +35,24 @@ export function QuestionNavigationPanel({
     const question = questions[index];
     const userAnswer = userAnswers[index];
 
-    let statusStyle = "border-input hover:bg-muted dark:hover:bg-muted/80 text-foreground"; // Default for unanswered
-    let IconComponent: LucideIcon | null = FileQuestion;
+    let statusStyle = "border-input hover:bg-muted dark:hover:bg-muted/80 text-foreground";
+    let IconComponent: LucideIcon | null = null; // Default to no icon
     let iconColor = "text-muted-foreground";
     let srText = `Question ${index + 1}`;
 
     if (quizState === 'reviewing') {
       if (userAnswer === question.correctAnswer) { // Correct
-        statusStyle = "bg-green-500/10 border-green-500 text-green-700 dark:bg-green-700/20 dark:border-green-600 dark:text-green-400 hover:bg-green-500/20 dark:hover:bg-green-700/30";
+        statusStyle = "bg-green-500/20 border-green-500 text-green-700 dark:bg-green-700/20 dark:border-green-600 dark:text-green-400 hover:bg-green-500/30 dark:hover:bg-green-700/40";
         IconComponent = CheckCircle;
         iconColor = "text-green-500 dark:text-green-400";
         srText += ", Correct";
       } else if (isAnswered && userAnswer !== question.correctAnswer) { // Incorrect
-        statusStyle = "bg-red-500/10 border-red-500 text-red-700 dark:bg-red-700/20 dark:border-red-600 dark:text-red-400 hover:bg-red-500/20 dark:hover:bg-red-700/30";
+        statusStyle = "bg-red-500/20 border-red-500 text-red-700 dark:bg-red-700/20 dark:border-red-600 dark:text-red-400 hover:bg-red-500/30 dark:hover:bg-red-700/40";
         IconComponent = XCircle;
         iconColor = "text-red-500 dark:text-red-400";
         srText += ", Incorrect";
       } else { // Not Answered in review
-         statusStyle = "bg-amber-500/10 border-amber-500 text-amber-700 dark:bg-amber-700/20 dark:border-amber-600 dark:text-amber-400 hover:bg-amber-500/20 dark:hover:bg-amber-700/30";
+         statusStyle = "bg-amber-500/20 border-amber-500 text-amber-700 dark:bg-amber-700/20 dark:border-amber-600 dark:text-amber-400 hover:bg-amber-500/30 dark:hover:bg-amber-700/40";
          IconComponent = AlertTriangle;
          iconColor = "text-amber-500 dark:text-amber-400";
          srText += ", Not Answered";
@@ -68,18 +68,18 @@ export function QuestionNavigationPanel({
         iconColor = "text-primary-foreground";
         srText += ", Currently Viewing";
       } else if (isMarked) {
-        statusStyle = "bg-yellow-400/20 border-yellow-500 text-yellow-600 dark:bg-yellow-500/15 dark:border-yellow-600 dark:text-yellow-400 hover:bg-yellow-400/30 dark:hover:bg-yellow-500/25";
+        statusStyle = "bg-yellow-400/20 border-yellow-500 text-yellow-600 dark:bg-yellow-500/20 dark:border-yellow-600 dark:text-yellow-400 hover:bg-yellow-400/30 dark:hover:bg-yellow-500/30";
         IconComponent = Eye;
         iconColor = "text-yellow-500 dark:text-yellow-400";
         srText += ", Marked for Review";
       } else if (isAnswered) {
-        statusStyle = "bg-green-500/10 border-green-500 text-green-700 dark:bg-green-700/20 dark:border-green-600 dark:text-green-400 hover:bg-green-500/20 dark:hover:bg-green-700/30";
+        statusStyle = "bg-green-500/20 border-green-500 text-green-700 dark:bg-green-700/20 dark:border-green-600 dark:text-green-400 hover:bg-green-500/30 dark:hover:bg-green-700/40";
         IconComponent = CheckSquare;
         iconColor = "text-green-500 dark:text-green-400";
         srText += ", Answered";
-      } else { // Unanswered
+      } else { // Unanswered, not current, not marked
+        // No icon, default styling (already set)
         srText += ", Unanswered";
-        // IconComponent is already FileQuestion, iconColor is text-muted-foreground
       }
     }
     return { statusStyle, IconComponent, iconColor, srText };
@@ -89,7 +89,7 @@ export function QuestionNavigationPanel({
     { label: "Current", boxStyle: "bg-primary", icon: Edit3, iconStyle: "text-primary-foreground" },
     { label: "Answered", boxStyle: "bg-green-500/20 border-green-500", icon: CheckSquare, iconStyle: "text-green-500" },
     { label: "Marked", boxStyle: "bg-yellow-400/20 border-yellow-500", icon: Eye, iconStyle: "text-yellow-500" },
-    { label: "Unanswered", boxStyle: "border-input", icon: FileQuestion, iconStyle: "text-muted-foreground" },
+    { label: "Unanswered", boxStyle: "border-input", icon: null /* No icon for default unanswered */, iconStyle: "text-muted-foreground" },
   ];
 
   const legendItemsReviewing = [
@@ -114,17 +114,17 @@ export function QuestionNavigationPanel({
               return (
                 <Button
                   key={index}
-                  variant="outline" // Base variant, actual colors applied by statusStyle
+                  variant="outline"
                   className={cn(
                     "h-10 w-10 sm:h-11 sm:w-11 p-0 relative flex items-center justify-center text-sm font-medium rounded-md aspect-square transition-all",
-                    statusStyle // Applies background, border, and text colors
+                    statusStyle
                   )}
                   onClick={() => onNavigateToQuestion(index)}
                   aria-label={srText}
                 >
                   <span className="text-xs sm:text-sm">{index + 1}</span>
                   {IconComponent && (
-                    <span className={cn("absolute top-0.5 right-0.5", iconColor)}>
+                    <span className={cn("absolute top-0.5 right-0.5 p-px", iconColor)}>
                        <IconComponent className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                     </span>
                   )}
