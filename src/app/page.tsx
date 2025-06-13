@@ -263,12 +263,7 @@ export default function Home() {
             {/* Left Column (30%) - Order 2 on mobile, Order 1 on md+ */}
             <div className="order-2 md:order-1 md:col-span-3 space-y-6 md:sticky md:top-[calc(var(--header-height,80px)_+_2rem)]">
               <div className="mb-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <BookOpenCheck className="h-9 w-9 text-primary" />
-                  <h1 className="text-2xl font-headline font-semibold text-primary">
-                    ScholarQuiz
-                  </h1>
-                </div>
+                
                 <p className="text-md text-muted-foreground">
                   Generate custom MCQs on any subject to boost your learning.
                 </p>
