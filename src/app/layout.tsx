@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
   title: 'ScholarQuiz',
@@ -29,7 +31,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <Header />
+          <div className="flex-grow">
+            {children}
+          </div>
+          <Footer />
           <Toaster />
         </ThemeProvider>
       </body>

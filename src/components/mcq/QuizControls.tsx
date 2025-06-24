@@ -2,9 +2,21 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, RotateCcw, Flag, Send } from 'lucide-react'; // Removed Trash2Icon
+import { ChevronLeft, ChevronRight, RotateCcw, Flag, Send } from 'lucide-react';
 import type { QuizState } from '@/types/mcq';
 import { cn } from '@/lib/utils';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 
 interface QuizControlsProps {
   currentQuestionIndex: number;
@@ -88,14 +100,31 @@ export function QuizControls({
             Save & Next <ChevronRight className="ml-2 h-5 w-5" />
           </Button>
         ) : (
-          <Button 
-            onClick={onSubmitTest} 
-            variant="primary"
-            className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white dark:bg-green-500 dark:hover:bg-green-600 h-12 px-6 text-md"
-            size="lg"
-          >
-            <Send className="mr-2 h-5 w-5" /> Submit Test
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="primary"
+                className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white dark:bg-green-500 dark:hover:bg-green-600 h-12 px-6 text-md"
+                size="lg"
+              >
+                <Send className="mr-2 h-5 w-5" /> Submit Test
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure you want to submit?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  You cannot change your answers after submitting. Your results will be saved to your history.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={onSubmitTest} className="bg-primary hover:bg-primary/90">
+                  Yes, Submit
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
       </div>
       <div className="flex flex-wrap justify-start items-center gap-4 border-t border-border/50 pt-5">
@@ -117,5 +146,3 @@ export function QuizControls({
     </div>
   );
 }
-
-    

@@ -8,6 +8,7 @@ import { MCQForm } from '@/components/mcq/MCQForm';
 import { QuizView } from '@/components/mcq/QuizView';
 import { LoadingModal } from '@/components/mcq/LoadingModal';
 import { generateMCQsAction } from '@/app/actions/generateMCQsAction';
+import { saveQuizAction } from '@/app/actions/quizActions';
 import type { MCQ, MCQFormInput, UserAnswer, MarkedReview, QuizState } from '@/types/mcq';
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -29,6 +30,8 @@ export default function Home() {
 
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [startTime, setStartTime] = useState<number | null>(null);
+
 
   const resetQuizState = useCallback(() => {
     setQuestions(null);
@@ -41,16 +44,51 @@ export default function Home() {
     setShowLoadingModal(false);
     setTimeLeft(null);
     setIsTimerRunning(false);
+    setStartTime(null);
   }, []);
 
-  const handleSubmitTest = useCallback(() => {
-    setQuizState('submitted');
+  const handleSubmitTest = useCallback(async () => {
     setIsTimerRunning(false);
-    toast({
-      title: "Test Submitted!",
-      description: "You can now review your answers or start a new test.",
-    });
-  }, [toast]);
+    setQuizState('submitted');
+    
+    if (questions && currentTestParams) {
+        let score = 0;
+        questions.forEach((q, idx) => {
+            if (userAnswers[idx] === q.correctAnswer) {
+                score++;
+            }
+        });
+        
+        const timeTaken = startTime ? Math.round((Date.now() - startTime) / 1000) : undefined;
+
+        const result = await saveQuizAction({
+            testParams: currentTestParams,
+            questions,
+            userAnswers,
+            score,
+            timeTaken,
+        });
+
+        if (result.success) {
+             toast({
+                title: "Test Submitted & Saved!",
+                description: "Your results have been saved to your history.",
+             });
+        } else {
+             toast({
+                variant: "destructive",
+                title: "Submission Error",
+                description: result.error || "Could not save your test results.",
+             });
+        }
+    } else {
+         toast({
+            title: "Test Submitted!",
+            description: "You can now review your answers or start a new test.",
+        });
+    }
+
+  }, [toast, questions, currentTestParams, userAnswers, startTime]);
 
   useEffect(() => {
     let timerId: NodeJS.Timeout | null = null;
@@ -98,6 +136,7 @@ export default function Home() {
       setMarkedForReview(new Array(result.data.length).fill(false));
       setCurrentQuestionIndex(0);
       setQuizState('taking');
+      setStartTime(Date.now());
       if (data.timeLimitMinutes && data.timeLimitMinutes > 0) {
         setTimeLeft(data.timeLimitMinutes * 60);
         setIsTimerRunning(true);
@@ -154,7 +193,7 @@ export default function Home() {
 
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex(prev => prev - 1);
     }
   };
 
@@ -255,7 +294,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
       <main className="flex-grow container mx-auto px-4 py-6 sm:py-10">
         <LoadingModal isOpen={showLoadingModal} />
         {quizState === 'form' && (
@@ -332,7 +370,6 @@ export default function Home() {
            </Alert>
          )}
       </main>
-      <Footer />
     </div>
   );
 }
