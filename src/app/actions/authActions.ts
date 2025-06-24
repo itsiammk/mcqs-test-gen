@@ -36,9 +36,13 @@ export async function signup(prevState: any, formData: FormData) {
     const hashedPassword = await bcrypt.hash(password, 10);
     await User.create({ email, password: hashedPassword });
 
-  } catch (e) {
-    console.error(e);
-    return { message: 'An error occurred during signup.' };
+  } catch (e: any) {
+    console.error('Signup Error:', e);
+    // Check for Mongoose connection-related errors
+    if (e.name === 'MongoNetworkError' || e.name === 'MongooseServerSelectionError') {
+       return { message: 'Database connection failed. Please check your MONGODB_URI and Atlas IP whitelist.' };
+    }
+    return { message: 'An unexpected error occurred during signup.' };
   }
 
   redirect('/login');
@@ -74,9 +78,13 @@ export async function login(prevState: any, formData: FormData) {
 
     await createSession({ userId: user._id.toString(), email: user.email });
 
-  } catch (e) {
-    console.error(e);
-    return { message: 'An error occurred during login.' };
+  } catch (e: any) {
+    console.error('Login Error:', e);
+    // Check for Mongoose connection-related errors
+    if (e.name === 'MongoNetworkError' || e.name === 'MongooseServerSelectionError') {
+       return { message: 'Database connection failed. Please check your MONGODB_URI and Atlas IP whitelist.' };
+    }
+    return { message: 'An unexpected error occurred during login.' };
   }
 
   redirect('/');
