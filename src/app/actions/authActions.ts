@@ -85,7 +85,7 @@ export async function login(prevState: any, formData: FormData) {
     return { message: 'An unexpected error occurred during login.' };
   }
 
-  redirect('/');
+  redirect('/dashboard');
 }
 
 export async function logout() {

@@ -5,9 +5,9 @@ export async function middleware(request: NextRequest) {
   const session = await getSession();
   const { pathname } = request.nextUrl;
 
-  // If user is trying to access auth pages but is already logged in, redirect to home
+  // If user is trying to access auth pages but is already logged in, redirect to dashboard
   if (session && (pathname.startsWith('/login') || pathname.startsWith('/register'))) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   // If user is not logged in and tries to access protected pages, redirect to login

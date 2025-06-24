@@ -1,4 +1,4 @@
-import { BookOpenCheck, History, LogIn, LogOut, UserPlus } from 'lucide-react';
+import { BookOpenCheck, History, LogIn, LogOut, UserPlus, BarChart2, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { ThemeToggle } from './ThemeToggle';
 import { getSession } from '@/lib/session';
@@ -8,6 +8,7 @@ import { logout } from '@/app/actions/authActions';
 export async function Header() {
   const session = await getSession();
   const headerHeight = "h-16 sm:h-20";
+  const homeUrl = session ? "/dashboard" : "/";
 
   return (
     <header 
@@ -15,7 +16,7 @@ export async function Header() {
       style={{ '--header-height': '80px' } as React.CSSProperties}
     >
       <div className={`container flex max-w-screen-2xl items-center justify-between px-4 sm:px-6 lg:px-8 ${headerHeight}`}>
-        <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
+        <Link href={homeUrl} className="flex items-center gap-2 sm:gap-3 group">
           <BookOpenCheck className="h-8 w-8 sm:h-10 sm:w-10 text-primary transition-transform group-hover:scale-110" />
           <h1 className="text-2xl sm:text-3xl font-headline font-semibold text-primary group-hover:text-primary/90">
             ScholarQuiz
@@ -25,12 +26,24 @@ export async function Header() {
           <ThemeToggle />
           {session ? (
              <div className="flex items-center gap-2">
+               <Link href="/dashboard">
+                 <Button variant="ghost" size="sm">
+                   <BarChart2 className="mr-2 h-4 w-4" />
+                   Dashboard
+                 </Button>
+               </Link>
                <Link href="/history">
                  <Button variant="ghost" size="sm">
                    <History className="mr-2 h-4 w-4" />
                    History
                  </Button>
                </Link>
+                <Link href="/">
+                  <Button variant="default" size="sm">
+                      <Zap className="mr-2 h-4 w-4" />
+                      New Quiz
+                  </Button>
+                </Link>
                 <form action={logout}>
                     <Button variant="outline" size="sm">
                         <LogOut className="mr-2 h-4 w-4" />
