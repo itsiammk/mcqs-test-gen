@@ -25,10 +25,13 @@ export default function Home() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<UserAnswer[]>([]);
   const [markedForReview, setMarkedForReview] = useState<MarkedReview[]>([]);
-
+  
+  // State for time tracking
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [startTime, setStartTime] = useState<number | null>(null);
+  const [startTime, setStartTime] = useState<number | null>(null); // Quiz start time
+  const [questionStartTime, setQuestionStartTime] = useState<number | null>(null); // Individual question start time
+  const [questionTimings, setQuestionTimings] = useState<number[]>([]);
 
 
   const resetQuizState = useCallback(() => {
@@ -43,11 +46,34 @@ export default function Home() {
     setTimeLeft(null);
     setIsTimerRunning(false);
     setStartTime(null);
+    setQuestionStartTime(null);
+    setQuestionTimings([]);
   }, []);
+
+  const recordTime = useCallback((indexToRecord: number) => {
+    if (questionStartTime && quizState === 'taking') {
+        const timeSpent = (Date.now() - questionStartTime) / 1000; // in seconds
+        setQuestionTimings(prev => {
+            const newTimings = [...prev];
+            // Add time spent to the question we are leaving
+            newTimings[indexToRecord] = (newTimings[indexToRecord] || 0) + timeSpent;
+            return newTimings;
+        });
+    }
+    setQuestionStartTime(Date.now());
+  }, [questionStartTime, quizState]);
 
   const handleSubmitTest = useCallback(async () => {
     setIsTimerRunning(false);
     setQuizState('submitted');
+    
+    // Record time for the final question before submitting
+    let finalTimings = [...questionTimings];
+    if (questionStartTime && quizState === 'taking') {
+        const timeSpent = (Date.now() - questionStartTime) / 1000;
+        finalTimings[currentQuestionIndex] = (finalTimings[currentQuestionIndex] || 0) + timeSpent;
+        setQuestionTimings(finalTimings);
+    }
     
     if (questions && currentTestParams) {
         let score = 0;
@@ -66,13 +92,14 @@ export default function Home() {
             userAnswers,
             score,
             timeTaken,
+            questionTimings: finalTimings,
         });
 
         if (result.success) {
              if (result.saved) {
                 toast({
                     title: "Test Submitted & Saved!",
-                    description: "Your results have been saved to your history.",
+                    description: "Your results and AI analysis have been saved to your history.",
                 });
              } else {
                 toast({
@@ -94,7 +121,7 @@ export default function Home() {
         });
     }
 
-  }, [toast, questions, currentTestParams, userAnswers, startTime]);
+  }, [toast, questions, currentTestParams, userAnswers, startTime, questionTimings, questionStartTime, quizState, currentQuestionIndex]);
 
   useEffect(() => {
     let timerId: NodeJS.Timeout | null = null;
@@ -140,9 +167,11 @@ export default function Home() {
       setQuestions(result.data);
       setUserAnswers(new Array(result.data.length).fill(null));
       setMarkedForReview(new Array(result.data.length).fill(false));
+      setQuestionTimings(new Array(result.data.length).fill(0)); // Initialize timings array
       setCurrentQuestionIndex(0);
       setQuizState('taking');
       setStartTime(Date.now());
+      setQuestionStartTime(Date.now()); // Start timer for the first question
       if (data.timeLimitMinutes && data.timeLimitMinutes > 0) {
         setTimeLeft(data.timeLimitMinutes * 60);
         setIsTimerRunning(true);
@@ -193,19 +222,24 @@ export default function Home() {
 
   const handleNextQuestion = () => {
     if (questions && currentQuestionIndex < questions.length - 1) {
+      recordTime(currentQuestionIndex);
       setCurrentQuestionIndex(prev => prev + 1);
     }
   };
 
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
+      recordTime(currentQuestionIndex);
       setCurrentQuestionIndex(prev => prev - 1);
     }
   };
 
   const handleNavigateToQuestion = (index: number) => {
     if (questions && index >= 0 && index < questions.length) {
-      setCurrentQuestionIndex(index);
+      if (index !== currentQuestionIndex) {
+        recordTime(currentQuestionIndex);
+        setCurrentQuestionIndex(index);
+      }
     }
   };
 
@@ -246,8 +280,10 @@ export default function Home() {
       const userAnswerIndex = userAnswers[index];
       const isCorrect = userAnswerIndex === q.correctAnswer;
       if (isCorrect) correctAnswersCount++;
+      const timeForQuestion = questionTimings[index] ? Math.round(questionTimings[index]) : 0;
 
       textContent += `Question ${index + 1}: ${q.questionText}\n`;
+      textContent += `Time on question: ${timeForQuestion} seconds\n`;
       textContent += `Options:\n`;
       q.options.forEach((opt, i) => {
         textContent += `  ${String.fromCharCode(65 + i)}) ${opt}\n`;

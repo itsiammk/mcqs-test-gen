@@ -13,6 +13,8 @@ export interface IQuiz extends Document {
   userAnswers: UserAnswer[];
   score: number;
   timeTaken?: number;
+  questionTimings: number[];
+  aiAnalysis?: object;
   createdAt: Date;
 }
 
@@ -28,6 +30,8 @@ const QuizSchema: Schema = new Schema({
   userAnswers: { type: Array, required: true },
   score: { type: Number, required: true },
   timeTaken: { type: Number }, // in seconds
+  questionTimings: { type: [Number] },
+  aiAnalysis: { type: Object },
 }, { timestamps: true });
 
 export default mongoose.models.Quiz || mongoose.model<IQuiz>('Quiz', QuizSchema);

@@ -6,6 +6,9 @@ import { QuizView } from '@/components/mcq/QuizView';
 import type { IQuiz } from '@/models/Quiz';
 import type { MCQFormInput, UserAnswer } from '@/types/mcq';
 import { useToast } from "@/hooks/use-toast";
+import { AIAnalysisCard } from './AIAnalysisCard';
+import type { AIAnalysis } from '@/ai/flows/analyze-quiz-results';
+
 
 interface ReviewWrapperProps {
   initialQuizData: IQuiz;
@@ -22,7 +25,7 @@ export function ReviewWrapper({ initialQuizData, initialTestParams }: ReviewWrap
   };
 
   const handleExportResults = () => {
-    const { questions, userAnswers, score, timeTaken } = initialQuizData;
+    const { questions, userAnswers, score, timeTaken, questionTimings } = initialQuizData;
 
     let textContent = `ScholarQuiz Results\n=====================\n\n`;
     textContent += `Subject: ${initialTestParams.subject}\n`;
@@ -47,8 +50,10 @@ export function ReviewWrapper({ initialQuizData, initialTestParams }: ReviewWrap
     questions.forEach((q, index) => {
       const userAnswerIndex = userAnswers[index];
       const isCorrect = userAnswerIndex === q.correctAnswer;
+      const timeForQuestion = questionTimings[index] ? Math.round(questionTimings[index]) : 'N/A';
 
       textContent += `Question ${index + 1}: ${q.questionText}\n`;
+      textContent += `Time on question: ${timeForQuestion} seconds\n`;
       textContent += `Options:\n`;
       q.options.forEach((opt, i) => {
         textContent += `  ${String.fromCharCode(65 + i)}) ${opt}\n`;
@@ -91,25 +96,30 @@ export function ReviewWrapper({ initialQuizData, initialTestParams }: ReviewWrap
   }
 
   return (
-    <QuizView
-      questions={initialQuizData.questions}
-      testParams={initialTestParams}
-      currentQuestionIndex={currentQuestionIndex}
-      userAnswers={initialQuizData.userAnswers as UserAnswer[]}
-      markedForReview={new Array(initialQuizData.questions.length).fill(false)}
-      quizState="reviewing"
-      timeLeft={getTimeLeft()}
-      isTimerRunning={false}
-      onSelectAnswer={dummyFunction}
-      onMarkForReview={dummyFunction}
-      onClearChoice={dummyFunction}
-      onNextQuestion={() => setCurrentQuestionIndex(prev => Math.min(prev + 1, initialQuizData.questions.length - 1))}
-      onPreviousQuestion={() => setCurrentQuestionIndex(prev => Math.max(prev - 1, 0))}
-      onNavigateToQuestion={setCurrentQuestionIndex}
-      onSubmitTest={dummyFunction}
-      onStartReview={dummyFunction}
-      onStartNewTest={handleStartNewTest}
-      onExportResults={handleExportResults}
-    />
+    <>
+      {initialQuizData.aiAnalysis && (
+        <AIAnalysisCard analysis={initialQuizData.aiAnalysis as AIAnalysis} />
+      )}
+      <QuizView
+        questions={initialQuizData.questions}
+        testParams={initialTestParams}
+        currentQuestionIndex={currentQuestionIndex}
+        userAnswers={initialQuizData.userAnswers as UserAnswer[]}
+        markedForReview={new Array(initialQuizData.questions.length).fill(false)}
+        quizState="reviewing"
+        timeLeft={getTimeLeft()}
+        isTimerRunning={false}
+        onSelectAnswer={dummyFunction}
+        onMarkForReview={dummyFunction}
+        onClearChoice={dummyFunction}
+        onNextQuestion={() => setCurrentQuestionIndex(prev => Math.min(prev + 1, initialQuizData.questions.length - 1))}
+        onPreviousQuestion={() => setCurrentQuestionIndex(prev => Math.max(prev - 1, 0))}
+        onNavigateToQuestion={setCurrentQuestionIndex}
+        onSubmitTest={dummyFunction}
+        onStartReview={dummyFunction}
+        onStartNewTest={handleStartNewTest}
+        onExportResults={handleExportResults}
+      />
+    </>
   );
 }
