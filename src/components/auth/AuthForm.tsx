@@ -28,6 +28,33 @@ export function AuthForm({ mode }: { mode: Mode }) {
     );
   }
 
+  // If registration was successful, show a success message and a link to login.
+  if (isRegister && state?.success) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background px-4">
+        <Card className="w-full max-w-sm text-center">
+          <CardHeader>
+            <CardTitle className="text-2xl">Registration Successful!</CardTitle>
+            <CardDescription>
+              Your account has been created.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-green-600 dark:text-green-400">{state.message}</p>
+          </CardContent>
+          <CardFooter>
+            <Link href="/login" className="w-full">
+                <Button className="w-full">
+                    <LogIn className="mr-2 h-4 w-4" /> Go to Login
+                </Button>
+            </Link>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
+
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-background px-4">
       <Card className="w-full max-w-sm">
@@ -56,7 +83,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
                  {state?.errors?.confirmPassword && <p className="text-xs text-red-500">{state.errors.confirmPassword[0]}</p>}
               </div>
             )}
-             {state?.message && !state?.errors && <p className="text-sm text-red-500 text-center">{state.message}</p>}
+             {state?.message && !state.success && <p className="text-sm text-red-500 text-center">{state.message}</p>}
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
             <SubmitButton />
