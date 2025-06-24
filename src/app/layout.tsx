@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { headers } from 'next/headers';
 
 export const metadata: Metadata = {
   title: 'ScholarQuiz',
@@ -15,6 +16,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = headers();
+  // The 'next-url' header provides the path, not a full URL.
+  // We can use it directly to check the current route.
+  const pathname = headersList.get('next-url') || "";
+
+  const isAuthPage = pathname === '/login' || pathname === '/register';
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -24,18 +32,27 @@ export default function RootLayout({
         <link rel="icon" href="https://i.ibb.co/LdJj12Mh/image.png" />
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
       </head>
-      <body className="font-body antialiased min-h-screen flex flex-col bg-background text-foreground">
+      <body className="font-body antialiased bg-background text-foreground">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          <div className="flex-grow">
-            {children}
-          </div>
-          <Footer />
+          {isAuthPage ? (
+            // For auth pages, render children directly. 
+            // The AuthForm component handles the full-screen layout.
+            children
+          ) : (
+            // For all other pages, use the standard layout.
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Footer />
+            </div>
+          )}
           <Toaster />
         </ThemeProvider>
       </body>
