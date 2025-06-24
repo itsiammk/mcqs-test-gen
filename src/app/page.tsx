@@ -2,8 +2,6 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
 import { MCQForm } from '@/components/mcq/MCQForm';
 import { QuizView } from '@/components/mcq/QuizView';
 import { LoadingModal } from '@/components/mcq/LoadingModal';
@@ -12,7 +10,7 @@ import { saveQuizAction } from '@/app/actions/quizActions';
 import type { MCQ, MCQFormInput, UserAnswer, MarkedReview, QuizState } from '@/types/mcq';
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, Brain, BookOpen, ListChecksIcon, ZapIcon, BookOpenCheck } from "lucide-react";
+import { Terminal, BookOpen, ListChecksIcon, ZapIcon } from "lucide-react";
 import { Button } from '@/components/ui/button';
 
 export default function Home() {
@@ -61,6 +59,7 @@ export default function Home() {
         
         const timeTaken = startTime ? Math.round((Date.now() - startTime) / 1000) : undefined;
 
+        // The save action now handles both authenticated and anonymous users
         const result = await saveQuizAction({
             testParams: currentTestParams,
             questions,
@@ -70,10 +69,17 @@ export default function Home() {
         });
 
         if (result.success) {
-             toast({
-                title: "Test Submitted & Saved!",
-                description: "Your results have been saved to your history.",
-             });
+             if (result.saved) {
+                toast({
+                    title: "Test Submitted & Saved!",
+                    description: "Your results have been saved to your history.",
+                });
+             } else {
+                toast({
+                    title: "Test Submitted!",
+                    description: "Log in to save your results for future analysis.",
+                });
+             }
         } else {
              toast({
                 variant: "destructive",
@@ -193,7 +199,7 @@ export default function Home() {
 
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+      setCurrentQuestionIndex(prev => prev + 1);
     }
   };
 

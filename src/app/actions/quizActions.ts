@@ -20,10 +20,13 @@ export async function saveQuizAction({
   userAnswers,
   score,
   timeTaken,
-}: SaveQuizData): Promise<{ success: boolean; error?: string }> {
+}: SaveQuizData): Promise<{ success: boolean; saved: boolean; error?: string }> {
   const session = await getSession();
+  
+  // If user is not logged in, do not attempt to save.
+  // Return success but indicate that it was not saved to the DB.
   if (!session) {
-    return { success: false, error: 'User not authenticated.' };
+    return { success: true, saved: false };
   }
 
   try {
@@ -45,9 +48,9 @@ export async function saveQuizAction({
 
     await newQuiz.save();
     revalidatePath('/history');
-    return { success: true };
+    return { success: true, saved: true };
   } catch (error) {
     console.error('Failed to save quiz:', error);
-    return { success: false, error: 'Failed to save quiz to database.' };
+    return { success: false, saved: false, error: 'Failed to save quiz to the database.' };
   }
 }
