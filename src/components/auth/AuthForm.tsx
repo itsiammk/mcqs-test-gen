@@ -29,7 +29,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
+    <div className="flex items-center justify-center min-h-screen bg-background px-4">
       <Card className="w-full max-w-sm">
         <form action={formAction}>
           <CardHeader>
@@ -39,6 +39,14 @@ export function AuthForm({ mode }: { mode: Mode }) {
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
+            {!isRegister && (
+              <div className="p-3 rounded-md bg-muted/80 text-muted-foreground text-sm space-y-2 border border-dashed">
+                <p className="font-semibold text-foreground">Demo Credentials</p>
+                <div>Email: <code className="font-mono bg-background/50 px-1.5 py-1 rounded text-xs">test@example.com</code></div>
+                <div>Password: <code className="font-mono bg-background/50 px-1.5 py-1 rounded text-xs">password123</code></div>
+                <p className="text-xs pt-1">(Note: Please sign up with these credentials first if the account doesn't exist.)</p>
+              </div>
+            )}
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" name="email" type="email" placeholder="m@example.com" required />
