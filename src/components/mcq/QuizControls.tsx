@@ -103,7 +103,7 @@ export function QuizControls({
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button 
-                variant="primary"
+                variant="default"
                 className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white dark:bg-green-500 dark:hover:bg-green-600 h-12 px-6 text-md"
                 size="lg"
               >
@@ -114,7 +114,7 @@ export function QuizControls({
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you sure you want to submit?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  You cannot change your answers after submitting. Your results will be saved to your history.
+                  You cannot change your answers after submitting. Your results will be saved to your history if you are logged in.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
