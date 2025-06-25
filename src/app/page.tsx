@@ -3,20 +3,15 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Zap, BarChart2, Target, BrainCircuit, ArrowRight } from 'lucide-react';
-import { NewHeroSection, CustomerLogosSection } from '@/components/ui/hero-section-1';
+import { HeroSection } from '@/components/ui/hero-section-1';
 
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-grow">
-        {/* New Hero Section */}
-        <NewHeroSection />
-
-        {/* Logos Section */}
-        <CustomerLogosSection />
-
+       <HeroSection />
+      
         {/* Features Section */}
-        <section className="py-20">
+        <section id="features" className="py-20">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold font-headline">Why ScholarQuiz?</h2>
@@ -48,7 +43,7 @@ export default function LandingPage() {
         </section>
 
         {/* How It Works Section */}
-        <section className="py-20 bg-muted/30 dark:bg-muted/20">
+        <section id="how-it-works" className="py-20 bg-muted/30 dark:bg-muted/20">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold font-headline">Get Started in 3 Simple Steps</h2>
@@ -93,7 +88,6 @@ export default function LandingPage() {
                 </Link>
             </div>
         </section>
-      </main>
     </div>
   );
 }
