@@ -36,7 +36,7 @@ export function AIAnalysisCard({ analysis }: { analysis: AIAnalysis }) {
                     )}
                     {analysis.areasForImprovement?.length > 0 && (
                         <div className="space-y-3">
-                            <h4 className="font-semibold text-foreground flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-amber-500" /> Areas for Improvement</h4>
+                            <h4 className="font-semibold text-foreground flex items-center gap-2"><AlertTriangle className="h-5 w-5 text-blue-500" /> Areas for Improvement</h4>
                             <ul className="list-disc list-outside space-y-2 text-muted-foreground pl-5">
                                 {analysis.areasForImprovement.map((a, i) => (
                                     <li key={i}>

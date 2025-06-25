@@ -27,8 +27,8 @@ body {
     --muted: 210 25% 96%; /* Very Light Gray - Lighter Muted */
     --muted-foreground: 210 10% 45%; /* Muted foreground */
 
-    --accent: 34 100% 62%; /* Muted Orange #FFAB40 */
-    --accent-foreground: 210 10% 23%; /* Dark Slate Gray-ish for light theme accent text */
+    --accent: 207 86% 68%; /* Soft Blue #64B5F6 */
+    --accent-foreground: 0 0% 100%; /* White for accent text on blue bg */
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -47,7 +47,7 @@ body {
     --sidebar-foreground: 210 10% 23%;
     --sidebar-primary: 207 86% 68%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 34 100% 62%;
+    --sidebar-accent: 207 86% 68%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 210 20% 80%;
     --sidebar-ring: 207 86% 68%;
@@ -72,7 +72,7 @@ body {
     --muted: 0 0% 10%; /* Dark Muted */
     --muted-foreground: 0 0% 65%; /* Lighter Muted Foreground */
 
-    --accent: 34 90% 55%; /* Slightly desaturated/darker orange for dark mode */
+    --accent: 207 70% 55%; /* Slightly desaturated/darker blue for dark mode */
     --accent-foreground: 0 0% 100%; /* White for dark theme accent text */
 
     --destructive: 0 62.8% 30.6%;
@@ -92,7 +92,7 @@ body {
     --sidebar-foreground: 0 0% 95%;
     --sidebar-primary: 207 70% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 34 90% 55%;
+    --sidebar-accent: 207 70% 55%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 13%;
     --sidebar-ring: 207 70% 55%;

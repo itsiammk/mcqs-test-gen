@@ -134,7 +134,7 @@ export function QuizControls({
           size="lg"
           className={cn(
             "text-md h-11 px-5",
-            isMarked && "bg-yellow-400/80 border-yellow-500 text-yellow-900 hover:bg-yellow-500/80 dark:bg-yellow-500/70 dark:border-yellow-600 dark:text-yellow-900 dark:hover:bg-yellow-600/70"
+            isMarked && "bg-primary/20 border-primary/50 text-primary hover:bg-primary/30"
           )}
         >
           <Flag className="mr-2 h-5 w-5" /> {isMarked ? 'Unmark Review' : 'Mark for Review'}

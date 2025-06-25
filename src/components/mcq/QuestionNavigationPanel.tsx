@@ -52,9 +52,9 @@ export function QuestionNavigationPanel({
         iconColor = "text-red-500 dark:text-red-400";
         srText += ", Incorrect";
       } else { // Not Answered in review
-         statusStyle = "bg-amber-500/20 border-amber-500 text-amber-700 dark:bg-amber-700/20 dark:border-amber-600 dark:text-amber-400 hover:bg-amber-500/30 dark:hover:bg-amber-700/40";
+         statusStyle = "bg-muted/50 border-muted-foreground/50 text-muted-foreground hover:bg-muted dark:hover:bg-muted/80";
          IconComponent = AlertTriangle;
-         iconColor = "text-amber-500 dark:text-amber-400";
+         iconColor = "text-muted-foreground";
          srText += ", Not Answered";
       }
       if (isCurrent) {
@@ -68,9 +68,9 @@ export function QuestionNavigationPanel({
         iconColor = "text-primary-foreground";
         srText += ", Currently Viewing";
       } else if (isMarked) {
-        statusStyle = "bg-yellow-400/20 border-yellow-500 text-yellow-600 dark:bg-yellow-500/20 dark:border-yellow-600 dark:text-yellow-400 hover:bg-yellow-400/30 dark:hover:bg-yellow-500/30";
+        statusStyle = "bg-primary/20 border-primary/50 text-primary dark:text-primary-foreground/80 hover:bg-primary/30 dark:hover:bg-primary/30";
         IconComponent = Eye;
-        iconColor = "text-yellow-500 dark:text-yellow-400";
+        iconColor = "text-primary dark:text-primary-foreground/80";
         srText += ", Marked for Review";
       } else if (isAnswered) {
         statusStyle = "bg-green-500/20 border-green-500 text-green-700 dark:bg-green-700/20 dark:border-green-600 dark:text-green-400 hover:bg-green-500/30 dark:hover:bg-green-700/40";
@@ -88,14 +88,14 @@ export function QuestionNavigationPanel({
   const legendItemsTaking = [
     { label: "Current", boxStyle: "bg-primary", icon: Edit3, iconStyle: "text-primary-foreground" },
     { label: "Answered", boxStyle: "bg-green-500/20 border-green-500", icon: CheckSquare, iconStyle: "text-green-500" },
-    { label: "Marked", boxStyle: "bg-yellow-400/20 border-yellow-500", icon: Eye, iconStyle: "text-yellow-500" },
+    { label: "Marked", boxStyle: "bg-primary/20 border-primary/50", icon: Eye, iconStyle: "text-primary" },
     { label: "Unanswered", boxStyle: "border-input", icon: null /* No icon for default unanswered */, iconStyle: "text-muted-foreground" },
   ];
 
   const legendItemsReviewing = [
     { label: "Correct", boxStyle: "bg-green-500/20 border-green-500", icon: CheckCircle, iconStyle: "text-green-500" },
     { label: "Incorrect", boxStyle: "bg-red-500/20 border-red-500", icon: XCircle, iconStyle: "text-red-500" },
-    { label: "Not Answered", boxStyle: "bg-amber-500/10 border-amber-500", icon: AlertTriangle, iconStyle: "text-amber-500" },
+    { label: "Not Answered", boxStyle: "bg-muted/50 border-muted-foreground/50", icon: AlertTriangle, iconStyle: "text-muted-foreground" },
     { label: "Current", boxStyle: "ring-2 ring-primary ring-offset-1", icon: Edit3, iconStyle: "text-primary" },
   ];
   

@@ -142,7 +142,7 @@ export function QuizView({
       {quizState === 'submitted' && (
          <Card className="text-center p-6 sm:p-10 shadow-xl my-10 bg-gradient-to-br from-card to-muted/30">
            <CardHeader className="pb-3">
-            <Award className="mx-auto h-20 w-20 text-yellow-500 mb-6" />
+            <Award className="mx-auto h-20 w-20 text-primary mb-6" />
             <CardTitle className="text-3xl sm:text-4xl font-semibold mb-3">Test Completed!</CardTitle>
             <CardDescription className="text-lg text-muted-foreground">
               You've successfully finished the quiz.

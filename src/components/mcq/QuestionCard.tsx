@@ -120,7 +120,7 @@ export function QuestionCard({
           <CardFooter className="flex flex-col items-start space-y-4 p-5 pt-0">
             <div className="w-full p-4 bg-muted/30 dark:bg-muted/20 rounded-lg border border-dashed border-border/70">
               <h4 className="font-headline text-lg mb-2 flex items-center">
-                <Brain className="mr-2 h-5 w-5 text-accent" />
+                <Brain className="mr-2 h-5 w-5 text-primary" />
                 Explanation
               </h4>
               <p className="text-sm sm:text-base leading-relaxed text-foreground/90">{question.explanation}</p>
@@ -138,7 +138,7 @@ export function QuestionCard({
                         </p>
                     )
                 ) : (
-                  <p className="font-medium text-amber-600 dark:text-amber-400 flex items-center">
+                  <p className="font-medium text-muted-foreground flex items-center">
                     <AlertTriangle className="mr-1.5 h-4 w-4 shrink-0"/> You did not answer this question. 
                     The correct answer was {getOptionLabel(question.correctAnswer)}.
                   </p>
