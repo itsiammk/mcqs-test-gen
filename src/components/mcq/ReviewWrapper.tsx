@@ -21,7 +21,7 @@ export function ReviewWrapper({ initialQuizData, initialTestParams }: ReviewWrap
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
   const handleStartNewTest = () => {
-    router.push('/');
+    router.push('/quiz/new');
   };
 
   const handleExportResults = () => {

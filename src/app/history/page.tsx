@@ -36,7 +36,7 @@ export default async function HistoryPage() {
             <p>Start a new quiz to see your history here!</p>
           </CardContent>
           <CardFooter>
-             <Link href="/">
+             <Link href="/quiz/new">
                 <Button>Start a New Quiz</Button>
             </Link>
           </CardFooter>

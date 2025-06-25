@@ -38,7 +38,7 @@ export default async function DashboardPage() {
             </CardHeader>
             <CardContent>
                 <p className="text-muted-foreground mb-6">Start a new quiz to see your progress and analytics here.</p>
-                <Link href="/">
+                <Link href="/quiz/new">
                     <Button size="lg">
                         <Zap className="mr-2 h-5 w-5" /> Start a New Quiz
                     </Button>
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
             Track your progress and identify areas for improvement.
           </p>
         </div>
-        <Link href="/">
+        <Link href="/quiz/new">
           <Button size="lg" className="h-11">
               <Zap className="mr-2 h-5 w-5" /> Start a New Quiz
           </Button>
