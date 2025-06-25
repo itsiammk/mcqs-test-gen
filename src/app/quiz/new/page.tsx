@@ -10,7 +10,7 @@ import { saveQuizAction } from '@/app/actions/quizActions';
 import type { MCQ, MCQFormInput, UserAnswer, MarkedReview, QuizState } from '@/types/mcq';
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, BookOpen, ListChecksIcon, ZapIcon } from "lucide-react";
+import { Terminal } from "lucide-react";
 import { Button } from '@/components/ui/button';
 
 export default function NewQuizPage() {
@@ -314,70 +314,26 @@ export default function NewQuizPage() {
       });
   };
 
-
-  const featureCards = [
-    {
-      icon: <BookOpen className="h-6 w-6 text-accent" />,
-      title: "Enter Subject",
-      description: "Input topic for quiz.",
-    },
-    {
-      icon: <ListChecksIcon className="h-6 w-6 text-accent" />,
-      title: "Set Parameters",
-      description: "Choose questions, difficulty, etc.",
-    },
-    {
-      icon: <ZapIcon className="h-6 w-6 text-accent" />,
-      title: "Get Your Quiz!",
-      description: "AI crafts a unique quiz instantly.",
-    },
-  ];
-
-
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow container mx-auto px-4 py-6 sm:py-10">
         <LoadingModal isOpen={showLoadingModal} />
         {quizState === 'form' && (
-          <div className="grid md:grid-cols-10 gap-x-8 lg:gap-x-12 items-start">
-            {/* Left Column (30%) - Order 2 on mobile, Order 1 on md+ */}
-            <div className="order-2 md:order-1 md:col-span-3 space-y-6 md:sticky md:top-[calc(var(--header-height,80px)_+_2rem)]">
-              <div className="mb-6">
-                
-                <p className="text-md text-muted-foreground">
-                  Generate custom MCQs on any subject to boost your learning.
+          <div className="max-w-4xl mx-auto">
+             <div className="text-center mb-8">
+                <h1 className="text-3xl sm:text-4xl font-bold font-headline">Create a New Quiz</h1>
+                <p className="text-lg text-muted-foreground mt-2">
+                    Fill out the parameters below and let our AI generate a custom quiz for you.
                 </p>
-              </div>
-              
-              <section className="text-left py-6 bg-muted/30 dark:bg-muted/20 rounded-xl p-5">
-                  <h3 className="text-xl font-headline font-semibold mb-4 text-foreground">How it Works</h3>
-                  <div className="space-y-4">
-                      {featureCards.map((feature, index) => (
-                         <div key={index} className="flex items-start p-3 bg-card/50 rounded-lg shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200 ease-in-out">
-                             <div className="p-2 rounded-full mr-3 bg-primary/10 shrink-0">
-                                {feature.icon}
-                             </div>
-                             <div>
-                               <h4 className="text-md font-semibold mb-0.5 text-foreground">{feature.title}</h4>
-                               <p className="text-xs text-muted-foreground leading-snug">{feature.description}</p>
-                             </div>
-                         </div>
-                      ))}
-                  </div>
-              </section>
             </div>
-
-            {/* Right Column (70%) - Order 1 on mobile, Order 2 on md+ */}
-            <div className="order-1 md:order-2 md:col-span-7">
-                <MCQForm onSubmit={handleFormSubmit} isLoading={isLoading} />
-                 {error && !isLoading && (
-                  <Alert variant="destructive" className="mt-6 p-4 shadow-md">
-                    <Terminal className="h-4 w-4" />
-                    <AlertTitle className="text-md font-semibold">Generation Error</AlertTitle>
-                    <AlertDescription className="text-sm mt-1">{error}</AlertDescription>
-                  </Alert>
-                )}
-            </div>
+            <MCQForm onSubmit={handleFormSubmit} isLoading={isLoading} />
+              {error && !isLoading && (
+              <Alert variant="destructive" className="mt-6 p-4 shadow-md">
+                <Terminal className="h-4 w-4" />
+                <AlertTitle className="text-md font-semibold">Generation Error</AlertTitle>
+                <AlertDescription className="text-sm mt-1">{error}</AlertDescription>
+              </Alert>
+            )}
           </div>
         )}
 
