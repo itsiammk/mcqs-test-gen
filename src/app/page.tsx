@@ -3,40 +3,17 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Zap, BarChart2, Target, BrainCircuit, ArrowRight } from 'lucide-react';
-import Image from 'next/image';
+import { NewHeroSection, CustomerLogosSection } from '@/components/ui/hero-section-1';
 
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="bg-muted/30 dark:bg-muted/20 py-20 sm:py-28">
-          <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-            <div className="text-center md:text-left">
-              <h1 className="text-4xl lg:text-5xl font-extrabold font-headline mb-4 text-primary">
-                Unlock Your Potential with AI-Powered Quizzes
-              </h1>
-              <p className="text-lg lg:text-xl text-muted-foreground mb-8">
-                Generate personalized multiple-choice questions on any subject in seconds. Prepare smarter, not harder.
-              </p>
-              <Link href="/quiz/new">
-                <Button size="lg" className="h-12 px-8 text-lg">
-                  Get Started for Free <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            </div>
-            <div>
-              <Image
-                src="https://placehold.co/600x400.png"
-                alt="AI Quiz Generation Dashboard"
-                width={600}
-                height={400}
-                className="rounded-xl shadow-2xl mx-auto"
-                data-ai-hint="education learning"
-              />
-            </div>
-          </div>
-        </section>
+        {/* New Hero Section */}
+        <NewHeroSection />
+
+        {/* Logos Section */}
+        <CustomerLogosSection />
 
         {/* Features Section */}
         <section className="py-20">
