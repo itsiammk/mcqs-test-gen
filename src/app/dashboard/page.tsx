@@ -5,13 +5,14 @@ import Quiz, { IQuiz } from '@/models/Quiz';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, BarChart, BookOpen, History, Lightbulb, Target, TrendingDown, TrendingUp, Zap, Trophy } from "lucide-react";
+import { ArrowRight, BarChart, BookOpen, History, Lightbulb, Target, TrendingDown, TrendingUp, Zap, Trophy, Activity } from "lucide-react";
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { SubjectPerformanceChart } from '@/components/dashboard/SubjectPerformanceChart';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AIAnalysisCard } from '@/components/mcq/AIAnalysisCard';
+import { OverallAIAnalysisCard } from '@/components/mcq/OverallAIAnalysisCard';
+import { summarizeHistoricalAnalyses, type OverallAIAnalysis } from '@/ai/flows/summarize-historical-analyses';
 import type { AIAnalysis } from '@/ai/flows/analyze-quiz-results';
 
 async function getDashboardData() {
@@ -23,18 +24,32 @@ async function getDashboardData() {
   await dbConnect();
   const quizzes = await Quiz.find({ userId: session.userId }).sort({ createdAt: -1 }).lean();
   
-  // Find the most recent quiz that has an AI analysis
-  const latestAnalysis = quizzes.find(q => q.aiAnalysis)?.aiAnalysis || null;
+  // Collect all available AI analyses. The query sorts by most recent first.
+  const allAnalyses = quizzes
+    .map(q => q.aiAnalysis)
+    .filter((a): a is AIAnalysis => !!a && Object.keys(a).length > 0);
+
+  let overallAnalysis: OverallAIAnalysis | null = null;
+  // A meta-analysis is only useful if there are multiple data points.
+  if (allAnalyses.length >= 2) {
+      try {
+        // The flow prompt is designed to handle analyses sorted from most recent to oldest.
+        overallAnalysis = await summarizeHistoricalAnalyses(allAnalyses);
+      } catch (e) {
+        console.error("Failed to generate overall AI analysis:", e);
+        overallAnalysis = null;
+      }
+  }
 
   // Make sure the data is serializable
   const serializableQuizzes = JSON.parse(JSON.stringify(quizzes)) as IQuiz[];
-  const serializableAnalysis = latestAnalysis ? JSON.parse(JSON.stringify(latestAnalysis)) as AIAnalysis : null;
+  const serializableOverallAnalysis = overallAnalysis ? JSON.parse(JSON.stringify(overallAnalysis)) as OverallAIAnalysis : null;
 
-  return { quizzes: serializableQuizzes, latestAnalysis: serializableAnalysis };
+  return { quizzes: serializableQuizzes, overallAnalysis: serializableOverallAnalysis };
 }
 
 export default async function DashboardPage() {
-  const { quizzes, latestAnalysis } = await getDashboardData();
+  const { quizzes, overallAnalysis } = await getDashboardData();
 
   if (quizzes.length === 0) {
     return (
@@ -200,16 +215,16 @@ export default async function DashboardPage() {
             </div>
         </TabsContent>
         <TabsContent value="ai-insights">
-             {latestAnalysis ? (
-                <AIAnalysisCard analysis={latestAnalysis} />
+             {overallAnalysis ? (
+                <OverallAIAnalysisCard analysis={overallAnalysis} />
             ) : (
                 <Card>
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Lightbulb className="h-5 w-5 text-primary" /> AI Insights Unavailable</CardTitle>
-                        <CardDescription>Complete a new quiz to get your personalized AI performance analysis.</CardDescription>
+                        <CardTitle className="flex items-center gap-2"><Lightbulb className="h-5 w-5 text-primary" /> Overall AI Insights Unavailable</CardTitle>
+                        <CardDescription>Complete at least two quizzes to get your personalized long-term performance analysis.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-muted-foreground">The AI analysis provides a deep dive into your strengths, weaknesses, and time management based on your most recent quiz performance. It's the best way to get actionable feedback!</p>
+                        <p className="text-muted-foreground">The overall AI analysis provides a deep dive into your consistent strengths, recurring weaknesses, and learning trends based on your entire quiz history. It's the best way to get actionable, high-level feedback!</p>
                     </CardContent>
                 </Card>
             )}
