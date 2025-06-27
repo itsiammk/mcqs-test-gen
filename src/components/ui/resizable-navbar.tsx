@@ -84,19 +84,19 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
   return (
     <motion.div
       animate={{
-        y: visible ? 20 : 0,
-        width: visible ? "40rem" : "100%",
-        borderRadius: visible ? "9999px" : "0px",
-        paddingRight: visible ? "16px" : "24px",
-        paddingLeft: visible ? "16px" : "24px",
+        y: visible ? 20 : 10,
+        width: visible ? "50rem" : "90%",
+        borderRadius: visible ? "9999px" : "20px",
+        paddingRight: visible ? "24px" : "24px",
+        paddingLeft: visible ? "24px" : "24px",
       }}
       transition={{
         type: "spring",
         stiffness: 200,
-        damping: 30,
+        damping: 20,
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden flex-row items-center justify-between self-start rounded-full bg-background/80 py-2 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] lg:flex dark:bg-neutral-950/80",
+        "relative z-[60] mx-auto hidden flex-row items-center justify-between self-start rounded-full bg-background/80 py-4  shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] lg:flex dark:bg-neutral-950/80",
         className,
       )}
     >

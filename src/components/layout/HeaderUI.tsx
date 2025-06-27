@@ -38,7 +38,7 @@ export function HeaderUI({ session }: { session: SessionPayload | null }) {
   const LoggedInDesktopButtons = () => (
     <div className="flex items-center gap-4">
       <form action={logout}>
-        <NavbarButton as="button" variant="secondary" className="!px-3 !py-1.5">
+        <NavbarButton as="button" variant="secondary" className="!px-6 !py-2 flex items-center">
           <LogOut className="mr-2 h-4 w-4" />
           Logout
         </NavbarButton>

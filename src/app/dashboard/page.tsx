@@ -5,11 +5,14 @@ import Quiz, { IQuiz } from '@/models/Quiz';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, BarChart, BookOpen, History, Target, TrendingDown, TrendingUp, Zap, Trophy } from "lucide-react";
+import { ArrowRight, BarChart, BookOpen, History, Lightbulb, Target, TrendingDown, TrendingUp, Zap, Trophy } from "lucide-react";
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { SubjectPerformanceChart } from '@/components/dashboard/SubjectPerformanceChart';
 import { format, formatDistanceToNow } from 'date-fns';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AIAnalysisCard } from '@/components/mcq/AIAnalysisCard';
+import type { AIAnalysis } from '@/ai/flows/analyze-quiz-results';
 
 async function getDashboardData() {
   const session = await getSession();
@@ -20,12 +23,18 @@ async function getDashboardData() {
   await dbConnect();
   const quizzes = await Quiz.find({ userId: session.userId }).sort({ createdAt: -1 }).lean();
   
+  // Find the most recent quiz that has an AI analysis
+  const latestAnalysis = quizzes.find(q => q.aiAnalysis)?.aiAnalysis || null;
+
   // Make sure the data is serializable
-  return JSON.parse(JSON.stringify(quizzes)) as IQuiz[];
+  const serializableQuizzes = JSON.parse(JSON.stringify(quizzes)) as IQuiz[];
+  const serializableAnalysis = latestAnalysis ? JSON.parse(JSON.stringify(latestAnalysis)) as AIAnalysis : null;
+
+  return { quizzes: serializableQuizzes, latestAnalysis: serializableAnalysis };
 }
 
 export default async function DashboardPage() {
-  const quizzes = await getDashboardData();
+  const { quizzes, latestAnalysis } = await getDashboardData();
 
   if (quizzes.length === 0) {
     return (
@@ -136,94 +145,117 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        {/* Subject Performance Chart */}
-        <div className="lg:col-span-2">
-            <SubjectPerformanceChart data={subjectPerformance} />
-        </div>
-
-        {/* Strengths & Weaknesses */}
-        <div className="space-y-6">
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-xl">
-                        <TrendingUp className="h-5 w-5 text-green-500"/>
-                        Your Strengths
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <ul className="space-y-3">
-                        {strengths.map(s => (
-                            <li key={s.subject} className="flex justify-between items-center text-sm">
-                                <span>{s.subject}</span>
-                                <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">{s.averageScore}%</Badge>
-                            </li>
-                        ))}
-                    </ul>
-                </CardContent>
-            </Card>
-             <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-xl">
-                        <TrendingDown className="h-5 w-5 text-red-500"/>
-                        Areas to Improve
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                     <ul className="space-y-3">
-                        {weaknesses.map(s => (
-                            <li key={s.subject} className="flex justify-between items-center text-sm">
-                                <span>{s.subject}</span>
-                                <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">{s.averageScore}%</Badge>
-                            </li>
-                        ))}
-                    </ul>
-                </CardContent>
-            </Card>
-        </div>
-      </div>
-        
-        {/* Recent History */}
-        <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-4 flex items-center gap-3">
-                <History className="h-6 w-6" />
-                Recent Activity
-            </h2>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {recentQuizzes.map(quiz => (
-                    <Card key={quiz._id.toString()}>
+       <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="overview">Statistical Overview</TabsTrigger>
+            <TabsTrigger value="ai-insights">
+                <Lightbulb className="mr-2 h-4 w-4" /> AI-Powered Insights
+            </TabsTrigger>
+        </TabsList>
+        <TabsContent value="overview">
+            <div className="grid gap-6 lg:grid-cols-3">
+                <div className="lg:col-span-2">
+                    <SubjectPerformanceChart data={subjectPerformance} />
+                </div>
+                <div className="space-y-6">
+                    <Card>
                         <CardHeader>
-                            <CardTitle className="text-lg">{quiz.subject}</CardTitle>
-                            <CardDescription>
-                                {formatDistanceToNow(new Date(quiz.createdAt), { addSuffix: true })}
-                            </CardDescription>
+                            <CardTitle className="flex items-center gap-2 text-xl">
+                                <TrendingUp className="h-5 w-5 text-green-500"/>
+                                Your Strengths
+                            </CardTitle>
+                             <CardDescription>Top subjects based on average score.</CardDescription>
                         </CardHeader>
-                        <CardContent className="text-sm space-y-2">
-                             <div className="flex justify-between">
-                                <span className="text-muted-foreground">Score:</span>
-                                <span className="font-semibold">{quiz.score} / {quiz.numQuestions}</span>
-                             </div>
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Difficulty:</span>
-                                <Badge variant={
-                                    quiz.difficulty === 'low' ? 'secondary' :
-                                    quiz.difficulty === 'high' ? 'destructive' :
-                                    'default'
-                                } className="capitalize">{quiz.difficulty}</Badge>
-                             </div>
+                        <CardContent>
+                            <ul className="space-y-3">
+                                {strengths.map(s => (
+                                    <li key={s.subject} className="flex justify-between items-center text-sm">
+                                        <span>{s.subject}</span>
+                                        <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">{s.averageScore}%</Badge>
+                                    </li>
+                                ))}
+                            </ul>
                         </CardContent>
-                        <CardFooter>
-                            <Link href={`/history/${quiz._id.toString()}`} className="w-full">
-                                <Button variant="outline" className="w-full">
-                                    Review <ArrowRight className="ml-2 h-4 w-4" />
-                                </Button>
-                            </Link>
-                        </CardFooter>
                     </Card>
-                ))}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-xl">
+                                <TrendingDown className="h-5 w-5 text-red-500"/>
+                                Areas to Improve
+                            </CardTitle>
+                            <CardDescription>Lowest subjects based on average score.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <ul className="space-y-3">
+                                {weaknesses.map(s => (
+                                    <li key={s.subject} className="flex justify-between items-center text-sm">
+                                        <span>{s.subject}</span>
+                                        <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">{s.averageScore}%</Badge>
+                                    </li>
+                                ))}
+                            </ul>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
-        </div>
-
+        </TabsContent>
+        <TabsContent value="ai-insights">
+             {latestAnalysis ? (
+                <AIAnalysisCard analysis={latestAnalysis} />
+            ) : (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2"><Lightbulb className="h-5 w-5 text-primary" /> AI Insights Unavailable</CardTitle>
+                        <CardDescription>Complete a new quiz to get your personalized AI performance analysis.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground">The AI analysis provides a deep dive into your strengths, weaknesses, and time management based on your most recent quiz performance. It's the best way to get actionable feedback!</p>
+                    </CardContent>
+                </Card>
+            )}
+        </TabsContent>
+      </Tabs>
+        
+      {/* Recent History */}
+      <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-3">
+              <History className="h-6 w-6" />
+              Recent Activity
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {recentQuizzes.map(quiz => (
+                  <Card key={quiz._id.toString()}>
+                      <CardHeader>
+                          <CardTitle className="text-lg">{quiz.subject}</CardTitle>
+                          <CardDescription>
+                              {formatDistanceToNow(new Date(quiz.createdAt), { addSuffix: true })}
+                          </CardDescription>
+                      </CardHeader>
+                      <CardContent className="text-sm space-y-2">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Score:</span>
+                              <span className="font-semibold">{quiz.score} / {quiz.numQuestions}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Difficulty:</span>
+                              <Badge variant={
+                                  quiz.difficulty === 'low' ? 'secondary' :
+                                  quiz.difficulty === 'high' ? 'destructive' :
+                                  'default'
+                              } className="capitalize">{quiz.difficulty}</Badge>
+                            </div>
+                      </CardContent>
+                      <CardFooter>
+                          <Link href={`/history/${quiz._id.toString()}`} className="w-full">
+                              <Button variant="outline" className="w-full">
+                                  Review <ArrowRight className="ml-2 h-4 w-4" />
+                              </Button>
+                          </Link>
+                      </CardFooter>
+                  </Card>
+              ))}
+          </div>
+      </div>
     </div>
   );
 }
