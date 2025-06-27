@@ -66,7 +66,7 @@ export function HeroSection() {
                                     </h1>
                                     <p
                                         className="mx-auto mt-8 max-w-2xl text-balance text-lg">
-                                        ntelligent quiz creation, detailed analytics, personalized insights <br /> <span className='text-sky-700'>all AI-powered</span>
+                                        Intelligent quiz creation, detailed analytics, personalized insights <br /> <span className='text-sky-700'>all AI-powered</span>
                                     </p>
                                 </AnimatedGroup>
 
