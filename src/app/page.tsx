@@ -17,23 +17,27 @@ export default function LandingPage() {
               <h2 className="text-3xl font-bold font-headline">Why ScholarQuiz?</h2>
               <p className="text-lg text-muted-foreground mt-2">Everything you need to supercharge your study sessions.</p>
             </div>
-            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <ul className="grid grid-cols-1 grid-rows-none gap-4 md:grid-cols-12 md:grid-rows-2 lg:gap-4">
               <GridItem
+                area="md:[grid-area:1/1/2/7] xl:[grid-area:1/1/2/5]"
                 icon={<Zap className="h-6 w-6 text-foreground" />}
                 title="Instant Quiz Generation"
                 description="Describe your topic, and our AI will instantly create relevant, challenging questions for you."
               />
               <GridItem
+                area="md:[grid-area:1/7/2/13] xl:[grid-area:2/1/3/5]"
                 icon={<BarChart2 className="h-6 w-6 text-foreground" />}
                 title="In-Depth Analytics"
                 description="Track your performance over time. Identify strengths and weaknesses with our visual dashboards."
               />
               <GridItem
+                area="md:[grid-area:2/1/3/7] xl:[grid-area:1/5/3/8]"
                 icon={<Target className="h-6 w-6 text-foreground" />}
                 title="Targeted Practice"
                 description="Focus on specific exam types or custom notes to tailor your practice for what matters most."
               />
               <GridItem
+                area="md:[grid-area:2/7/3/13] xl:[grid-area:1/8/2/13]"
                 icon={<BrainCircuit className="h-6 w-6 text-foreground" />}
                 title="AI-Powered Insights"
                 description="Get smart feedback on your performance, including time management and concept mastery."
@@ -93,15 +97,15 @@ export default function LandingPage() {
 }
 
 interface GridItemProps {
-  className?: string;
+  area: string;
   icon: React.ReactNode;
   title: string;
   description: React.ReactNode;
 }
 
-const GridItem = ({ className, icon, title, description }: GridItemProps) => {
+const GridItem = ({ area, icon, title, description }: GridItemProps) => {
   return (
-    <li className={`min-h-[14rem] list-none ${className}`}>
+    <li className={`min-h-[14rem] list-none ${area}`}>
       <div className="relative h-full rounded-2xl border p-2 md:rounded-3xl md:p-3">
         <GlowingEffect
           glow={true}
@@ -127,7 +131,6 @@ const GridItem = ({ className, icon, title, description }: GridItemProps) => {
     </li>
   );
 };
-
 
 function HowItWorksStep({ step, title, description }: { step: string; title: string; description: string }) {
   return (
