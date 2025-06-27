@@ -1,7 +1,6 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Zap, BarChart2, Target, BrainCircuit, ArrowRight } from 'lucide-react';
 import { HeroSection } from '@/components/ui/hero-section-1';
 import { GlowingEffect } from "@/components/ui/glowing-effect";
@@ -18,7 +17,7 @@ export default function LandingPage() {
               <h2 className="text-3xl font-bold font-headline">Why ScholarQuiz?</h2>
               <p className="text-lg text-muted-foreground mt-2">Everything you need to supercharge your study sessions.</p>
             </div>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8">
+            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               <GridItem
                 icon={<Zap className="h-6 w-6 text-foreground" />}
                 title="Instant Quiz Generation"
