@@ -41,15 +41,15 @@ export function HeroSection() {
                     <div className="h-[80rem] -translate-y-[350px] absolute left-0 top-0 w-56 -rotate-45 bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.04)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)]" />
                 </div>
                 <section>
-                    <div className="relative pt-24 md:pt-36">
+                    <div className="relative pt-24 md:pt-24">
                         <div aria-hidden className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,var(--background)_75%)]" />
-                        <div className="mx-auto max-w-7xl px-6">
+                        <div className="mx-auto max-w-7xl px-60">
                             <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
                                 <AnimatedGroup variants={transitionVariants}>
                                     <Link
                                         href="#link"
                                         className="hover:bg-background dark:hover:border-t-border bg-muted group mx-auto flex w-fit items-center gap-4 rounded-full border p-1 pl-4 shadow-md shadow-black/5 transition-all duration-300 dark:border-t-white/5 dark:shadow-zinc-950">
-                                        <span className="text-foreground text-sm">Introducing Support for AI Models</span>
+                                        <span className="text-foreground text-sm">Best In Market | Powered By AI</span>
                                         <span className="dark:border-background block h-4 w-0.5 border-l bg-white dark:bg-zinc-700"></span>
 
                                         <div className="bg-background group-hover:bg-muted size-6 overflow-hidden rounded-full duration-500">
@@ -65,12 +65,12 @@ export function HeroSection() {
                                     </Link>
                         
                                     <h1
-                                        className="mt-8 max-w-4xl mx-auto text-balance text-6xl md:text-7xl lg:mt-16 xl:text-[5.25rem]">
-                                        Modern Solutions for Customer Engagement
+                                        className="mt-8 max-w-4xl mx-auto text-balance text-6xl md:text-7xl lg:mt-8 xl:text-[5.25rem]">
+                                        AI-Powered <span className='text-sky-500 font-semibold '> Quiz Generation</span> at Your Fingertips
                                     </h1>
                                     <p
                                         className="mx-auto mt-8 max-w-2xl text-balance text-lg">
-                                        Highly customizable components for building modern websites and applications that look and feel the way you mean it.
+                                        ntelligent quiz creation, detailed analytics, personalized insights <br /> <span className='text-sky-700'>all AI-powered</span>
                                     </p>
                                 </AnimatedGroup>
 
@@ -104,7 +104,7 @@ export function HeroSection() {
                                         asChild
                                         size="lg"
                                         variant="ghost"
-                                        className="h-10.5 rounded-xl px-5">
+                                        className="h-10.5 rounded-xl px-5  py-3 bg-sky-100 dark:bg-sky-900 hover:bg-sky-200 hover:text-gray-600 dark:hover:text-gray-300">
                                         <Link href="#link">
                                             <span className="text-nowrap">Request a demo</span>
                                         </Link>
