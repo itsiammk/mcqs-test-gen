@@ -19,9 +19,8 @@ export default function RootLayout({
   const headersList = headers();
   const pathname = headersList.get('next-url') || "";
 
-  // The new hero section has its own header, so we hide the default one on the landing page.
-  // We also hide it on auth pages.
-  const isSpecialLayout = pathname === '/' || pathname === '/login' || pathname === '/register';
+  // Hide the global header/footer on auth pages.
+  const isSpecialLayout = pathname === '/login' || pathname === '/register';
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -40,14 +39,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {isSpecialLayout ? (
-            // For the landing page and auth pages, render children directly.
-            // The hero/auth components handle their own layout.
             children
           ) : (
-            // For all other pages, use the standard layout with global header/footer.
             <div className="min-h-screen flex flex-col">
               <Header />
-              <main className="flex-grow">
+              <main className="flex-grow pt-20">
                 {children}
               </main>
               <Footer />
