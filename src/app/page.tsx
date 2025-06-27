@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Zap, BarChart2, Target, BrainCircuit, ArrowRight } from 'lucide-react';
 import { HeroSection } from '@/components/ui/hero-section-1';
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 export default function LandingPage() {
   return (
@@ -17,28 +18,28 @@ export default function LandingPage() {
               <h2 className="text-3xl font-bold font-headline">Why ScholarQuiz?</h2>
               <p className="text-lg text-muted-foreground mt-2">Everything you need to supercharge your study sessions.</p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <FeatureCard
-                icon={<Zap className="h-8 w-8 text-primary" />}
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8">
+              <GridItem
+                icon={<Zap className="h-6 w-6 text-foreground" />}
                 title="Instant Quiz Generation"
                 description="Describe your topic, and our AI will instantly create relevant, challenging questions for you."
               />
-              <FeatureCard
-                icon={<BarChart2 className="h-8 w-8 text-primary" />}
+              <GridItem
+                icon={<BarChart2 className="h-6 w-6 text-foreground" />}
                 title="In-Depth Analytics"
                 description="Track your performance over time. Identify strengths and weaknesses with our visual dashboards."
               />
-              <FeatureCard
-                icon={<Target className="h-8 w-8 text-primary" />}
+              <GridItem
+                icon={<Target className="h-6 w-6 text-foreground" />}
                 title="Targeted Practice"
                 description="Focus on specific exam types or custom notes to tailor your practice for what matters most."
               />
-              <FeatureCard
-                icon={<BrainCircuit className="h-8 w-8 text-primary" />}
+              <GridItem
+                icon={<BrainCircuit className="h-6 w-6 text-foreground" />}
                 title="AI-Powered Insights"
                 description="Get smart feedback on your performance, including time management and concept mastery."
               />
-            </div>
+            </ul>
           </div>
         </section>
 
@@ -92,21 +93,42 @@ export default function LandingPage() {
   );
 }
 
-function FeatureCard({ icon, title, description }: { icon: React.ReactNode; title: string; description: string }) {
-  return (
-    <Card className="text-center p-6 shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-      <CardHeader className="p-0 items-center">
-        <div className="bg-primary/10 p-4 rounded-full mb-4">
-            {icon}
-        </div>
-        <CardTitle className="text-xl font-semibold font-headline">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0 pt-4">
-        <p className="text-muted-foreground">{description}</p>
-      </CardContent>
-    </Card>
-  );
+interface GridItemProps {
+  className?: string;
+  icon: React.ReactNode;
+  title: string;
+  description: React.ReactNode;
 }
+
+const GridItem = ({ className, icon, title, description }: GridItemProps) => {
+  return (
+    <li className={`min-h-[14rem] list-none ${className}`}>
+      <div className="relative h-full rounded-2xl border p-2 md:rounded-3xl md:p-3">
+        <GlowingEffect
+          glow={true}
+          disabled={false}
+          proximity={64}
+        />
+        <div className="border-0.75 relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl p-6 md:p-6 dark:shadow-[0px_0px_27px_0px_#2D2D2D]">
+          <div className="relative flex flex-1 flex-col justify-between gap-3">
+            <div className="w-fit rounded-lg border border-border p-3">
+              {icon}
+            </div>
+            <div className="space-y-3">
+              <h3 className="font-headline pt-0.5 text-xl font-semibold text-balance text-foreground md:text-2xl">
+                {title}
+              </h3>
+              <p className="font-body text-sm text-muted-foreground md:text-base">
+                {description}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+  );
+};
+
 
 function HowItWorksStep({ step, title, description }: { step: string; title: string; description: string }) {
   return (

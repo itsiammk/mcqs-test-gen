@@ -85,7 +85,7 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
     <motion.div
       animate={{
         y: visible ? 20 : 10,
-        width: visible ? "50rem" : "90%",
+        width: visible ? "50rem" : "98%",
         borderRadius: visible ? "9999px" : "20px",
         paddingRight: visible ? "24px" : "24px",
         paddingLeft: visible ? "24px" : "24px",
