@@ -168,52 +168,54 @@ export default async function DashboardPage() {
             </TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
-            <div className="grid gap-6 lg:grid-cols-3">
-                <div className="lg:col-span-2">
-                    <SubjectPerformanceChart data={subjectPerformance} />
-                </div>
-                <div className="space-y-6">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-xl">
-                                <TrendingUp className="h-5 w-5 text-green-500"/>
-                                Your Strengths
-                            </CardTitle>
-                             <CardDescription>Top subjects based on average score.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <ul className="space-y-3">
-                                {strengths.map(s => (
-                                    <li key={s.subject} className="flex justify-between items-center text-sm">
-                                        <span>{s.subject}</span>
-                                        <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">{s.averageScore}%</Badge>
-                                    </li>
-                                ))}
-                            </ul>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-xl">
-                                <TrendingDown className="h-5 w-5 text-red-500"/>
-                                Areas to Improve
-                            </CardTitle>
-                            <CardDescription>Lowest subjects based on average score.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <ul className="space-y-3">
-                                {weaknesses.map(s => (
-                                    <li key={s.subject} className="flex justify-between items-center text-sm">
-                                        <span>{s.subject}</span>
-                                        <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300">{s.averageScore}%</Badge>
-                                    </li>
-                                ))}
-                            </ul>
-                        </CardContent>
-                    </Card>
-                </div>
+    <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-3 w-full overflow-hidden">
+        <div className="lg:col-span-2 w-full min-w-0">
+            <div className="w-full overflow-x-auto">
+                <SubjectPerformanceChart data={subjectPerformance} />
             </div>
-        </TabsContent>
+        </div>
+        <div className="space-y-4 sm:space-y-6 w-full min-w-0">
+            <Card className="w-full">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                        <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0"/>
+                        <span className="truncate">Your Strengths</span>
+                    </CardTitle>
+                     <CardDescription className="text-sm">Top subjects based on average score.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ul className="space-y-2 sm:space-y-3">
+                        {strengths.map(s => (
+                            <li key={s.subject} className="flex justify-between items-center gap-2 text-sm">
+                                <span className="truncate flex-1 min-w-0">{s.subject}</span>
+                                <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300 flex-shrink-0">{s.averageScore}%</Badge>
+                            </li>
+                        ))}
+                    </ul>
+                </CardContent>
+            </Card>
+            <Card className="w-full">
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                        <TrendingDown className="h-4 w-4 sm:h-5 sm:w-5 text-red-500 flex-shrink-0"/>
+                        <span className="truncate">Areas to Improve</span>
+                    </CardTitle>
+                    <CardDescription className="text-sm">Lowest subjects based on average score.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ul className="space-y-2 sm:space-y-3">
+                        {weaknesses.map(s => (
+                            <li key={s.subject} className="flex justify-between items-center gap-2 text-sm">
+                                <span className="truncate flex-1 min-w-0">{s.subject}</span>
+                                <Badge variant="secondary" className="bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-300 flex-shrink-0">{s.averageScore}%</Badge>
+                            </li>
+                        ))}
+                    </ul>
+                </CardContent>
+            </Card>
+        </div>
+    </div>
+</TabsContent>
         <TabsContent value="ai-insights">
              {overallAnalysis ? (
                 <OverallAIAnalysisCard analysis={overallAnalysis} />

@@ -4,10 +4,6 @@ import Link from 'next/link'
 import { ArrowRight, ChevronRight, Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AnimatedGroup } from '@/components/ui/animated-group'
-import db1 from '../../images/dashboradmcq1.png'
-import db2 from '../../images/dashboradmcq2.png'
-import db3 from '../../images/dashboradmcq3.png'
-import db4 from '../../images/dashboradmcq4.png'
 
 const transitionVariants = {
     item: {
@@ -43,7 +39,7 @@ export function HeroSection() {
                 <section>
                     <div className="relative pt-24 md:pt-24">
                         <div aria-hidden className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,var(--background)_75%)]" />
-                        <div className="mx-auto max-w-7xl px-60">
+                        <div className="mx-auto max-w-7xl px-3 sm:px-60">
                             <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
                                 <AnimatedGroup variants={transitionVariants}>
                                     <Link
