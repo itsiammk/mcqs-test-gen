@@ -90,8 +90,8 @@ export function HeroSection() {
                                             asChild
                                             size="lg"
                                             className="rounded-xl px-5 text-base">
-                                            <Link href="#link">
-                                                <span className="text-nowrap">Start Building</span>
+                                            <Link href="/quiz/new">
+                                                <span className="text-nowrap">Create Quiz</span>
                                             </Link>
                                         </Button>
                                     </div>
@@ -101,8 +101,8 @@ export function HeroSection() {
                                         size="lg"
                                         variant="ghost"
                                         className="h-10.5 rounded-xl px-5  py-3 bg-sky-100 dark:bg-sky-900 hover:bg-sky-200 hover:text-gray-600 dark:hover:text-gray-300">
-                                        <Link href="#link">
-                                            <span className="text-nowrap">Request a demo</span>
+                                        <Link href="/login">
+                                            <span className="text-nowrap">Get Started</span>
                                         </Link>
                                     </Button>
                                 </AnimatedGroup>
